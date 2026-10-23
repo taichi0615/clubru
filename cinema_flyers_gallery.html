@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
+  <title>CLUBRU CINEMA | 東京ナイトクラブ 映画ポスター風フライヤーギャラリー</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@600;700;800;900&family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-cinema: #070709;
+      --card-cinema: #0e0e13;
+      --border-cinema: #202028;
+      --gold: #d4af37;
+      --gold-light: #fef08a;
+      --red-carpet: #e11d48;
+    }
+    body {
+      background-color: var(--bg-cinema);
+      color: #f4f4f5;
+      font-family: 'Inter', 'Noto Sans JP', -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-cinema-title {
+      font-family: 'Cinzel', serif;
+      letter-spacing: 0.08em;
+    }
+    .font-billing {
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.12em;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    /* Cinema Poster Lightbox Frame (映画館のポスター照明枠風) */
+    .movie-poster-card {
+      background: #09090c;
+      border: 1px solid var(--border-cinema);
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 10px 25px -10px rgba(0,0,0,0.85);
+    }
+    .movie-poster-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      border-color: #e4e4e7;
+      box-shadow: 0 24px 45px -12px rgba(0,0,0,0.95), 0 0 25px rgba(212, 175, 55, 0.25);
+    }
+    .movie-poster-card.past-archive {
+      border-color: #27272a;
+    }
+    .movie-poster-card.past-archive:hover {
+      border-color: #d4af37;
+      box-shadow: 0 24px 45px -12px rgba(0,0,0,0.95), 0 0 30px rgba(212, 175, 55, 0.35);
+    }
+    /* 2:3 Movie Poster Aspect Ratio */
+    .poster-aspect {
+      aspect-ratio: 2 / 3;
+      position: relative;
+      background: #000;
+      overflow: hidden;
+    }
+    .poster-aspect img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .movie-poster-card:hover .poster-aspect img {
+      transform: scale(1.06);
+    }
+    /* Movie Billing Credits Block */
+    .billing-block {
+      font-size: 9px;
+      line-height: 1.25;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #a1a1aa;
+    }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    /* Gold Foil Stamped Badge */
+    .badge-gold {
+      background: linear-gradient(135deg, #b45309, #d4af37, #fef08a, #d4af37);
+      color: #000;
+      font-weight: 800;
+      box-shadow: 0 2px 10px rgba(212, 175, 55, 0.4);
+    }
+    /* Theater Spotlight Effect */
+    .spotlight-glow {
+      background: radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.12) 0%, transparent 70%);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col pb-24">
+
+  <!-- ================= TOP MARQUEE BANNER ================= -->
+  <div class="bg-gradient-to-r from-red-950 via-black to-amber-950 border-b border-zinc-800 py-2.5 px-4 text-xs font-mono-code text-center text-zinc-300 flex items-center justify-center gap-3">
+    <span class="inline-block w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+    <span class="font-bold text-amber-300">CLUBRU CINEMA POSTER ARCHIVE</span>
+    <span class="text-zinc-500 hidden sm:inline">|</span>
+    <span class="hidden sm:inline">東京31大クラブの公式フライヤーを映画ポスター形式で一挙上映・展示中</span>
+  </div>
+
+  <!-- ================= CINEMA HEADER ================= -->
+  <header class="sticky top-0 z-40 bg-[#070709]/95 backdrop-blur-md border-b border-zinc-800 px-4 lg:px-10 py-4">
+    <div class="max-w-[1400px] mx-auto flex items-center justify-between gap-4">
+      
+      <!-- Brand -->
+      <a href="javascript:void(0)" onclick="setFilter('ALL', 'ALL')" class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 text-black font-black text-base flex items-center justify-center shadow-lg tracking-wider font-cinema-title">
+          CC
+        </div>
+        <div>
+          <span class="font-cinema-title text-lg sm:text-xl font-bold tracking-wider text-white block leading-none">CLUBRU CINEMA</span>
+          <span class="text-[10px] text-zinc-400 font-mono-code uppercase tracking-widest font-semibold">POSTER &amp; FLYER EXHIBITION</span>
+        </div>
+      </a>
+
+      <!-- View & Exhibition Toggles -->
+      <div class="flex items-center gap-2">
+        <button onclick="toggleSound()" id="soundBtn" class="px-3 py-1.5 rounded-xl border border-zinc-800 bg-zinc-900/60 text-zinc-300 hover:text-white text-xs font-mono-code flex items-center gap-1.5 transition">
+          <span id="soundIcon">🔊</span>
+          <span class="hidden md:inline">CINEMA FX</span>
+        </button>
+        <button onclick="openBoothView()" class="px-3.5 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold transition flex items-center gap-1.5">
+          <span>📽️</span>
+          <span class="hidden sm:inline">個別集中ブース</span> (一蘭風)
+        </button>
+        <a href="index.html" class="px-3.5 py-1.5 rounded-xl bg-white text-black font-bold text-xs hover:bg-zinc-200 transition shadow">
+          ポータル総合へ ➔
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ================= HERO SHOWCASE ================= -->
+  <div class="spotlight-glow border-b border-zinc-800/80 py-10 px-4 lg:px-10 text-center relative overflow-hidden">
+    <div class="max-w-3xl mx-auto space-y-3.5">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono-code font-bold">
+        <span>🎬</span> FILM &amp; NIGHTLIFE ARCHIVE EXHIBITION
+      </div>
+      <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white font-cinema-title leading-tight">
+        過去フライヤー 映画ポスター名作館
+      </h1>
+      <p class="text-xs sm:text-sm text-zinc-400 max-w-xl mx-auto leading-relaxed">
+        東京のナイトカルチャーを彩る公式フライヤーを、名作映画ポスターの美学とクレジット表記で鑑賞できる特別ギャラリー。過去アーカイブから最新上映作まで完全網羅。
+      </p>
+    </div>
+  </div>
+
+  <!-- ================= MAIN GALLERY CONTAINER ================= -->
+  <main class="max-w-[1400px] mx-auto w-full px-4 lg:px-10 py-8 flex-1 space-y-8">
+
+    <!-- CONTROLS & FILTER TABS -->
+    <div class="space-y-4">
+      
+      <!-- Scope Selection (Past Archive / Now Showing / All) -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-zinc-950/70 p-4 rounded-2xl border border-zinc-800/90">
+        
+        <!-- Primary Curated Tabs -->
+        <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar w-full sm:w-auto text-xs sm:text-sm">
+          <button onclick="setScope('PAST_ARCHIVE')" id="scope-past" class="px-4 py-2 rounded-xl badge-gold whitespace-nowrap transition flex items-center gap-1.5 shadow">
+            <span>🏛️</span> 過去アーカイブ名作上映 (<span id="count-past">7</span>)
+          </button>
+          <button onclick="setScope('NOW_SHOWING')" id="scope-now" class="px-4 py-2 rounded-xl border border-zinc-800 text-zinc-400 hover:text-white font-medium whitespace-nowrap transition flex items-center gap-1.5">
+            <span>🔥</span> 上映中・開催予定 (<span id="count-now">84</span>)
+          </button>
+          <button onclick="setScope('ALL')" id="scope-all" class="px-4 py-2 rounded-xl border border-zinc-800 text-zinc-400 hover:text-white font-medium whitespace-nowrap transition flex items-center gap-1.5">
+            <span>🎞️</span> 全作品コレクション (<span id="count-all">91</span>)
+          </button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="w-full sm:w-72 relative">
+          <input type="text" id="cinemaSearch" oninput="handleSearch(this.value)" placeholder="DJ名・クラブ名・ジャンルで検索..." 
+                 class="w-full text-xs sm:text-sm py-2 pl-3 pr-8 rounded-xl bg-black border border-zinc-800 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400">
+          <span class="absolute right-2.5 top-2.5 text-xs text-zinc-500">🔍</span>
+        </div>
+
+      </div>
+
+      <!-- Area & Genre Filter Chips -->
+      <div class="flex flex-wrap items-center justify-between gap-3 text-xs">
+        
+        <!-- Area -->
+        <div class="flex items-center gap-1.5 overflow-x-auto hide-scrollbar pb-1">
+          <span class="text-zinc-500 font-mono-code mr-1 font-bold">AREA:</span>
+          <button onclick="setArea('ALL')" class="area-chip px-3 py-1.5 rounded-lg bg-zinc-700 text-white font-bold whitespace-nowrap" data-area="ALL">全エリア</button>
+          <button onclick="setArea('渋谷')" class="area-chip px-3 py-1.5 rounded-lg border border-zinc-800 text-zinc-400 hover:text-white whitespace-nowrap" data-area="渋谷">渋谷</button>
+          <button onclick="setArea('六本木')" class="area-chip px-3 py-1.5 rounded-lg border border-zinc-800 text-zinc-400 hover:text-white whitespace-nowrap" data-area="六本木">六本木</button>
+          <button onclick="setArea('新宿')" class="area-chip px-3 py-1.5 rounded-lg border border-zinc-800 text-zinc-400 hover:text-white whitespace-nowrap" data-area="新宿">新宿</button>
+          <button onclick="setArea('原宿・表参道')" class="area-chip px-3 py-1.5 rounded-lg border border-zinc-800 text-zinc-400 hover:text-white whitespace-nowrap" data-area="原宿・表参道">表参道</button>
+          <button onclick="setArea('銀座')" class="area-chip px-3 py-1.5 rounded-lg border border-zinc-800 text-zinc-400 hover:text-white whitespace-nowrap" data-area="銀座">銀座</button>
+        </div>
+
+        <!-- Mode Toggle -->
+        <div class="flex items-center gap-2 font-mono-code text-[11px] text-zinc-400">
+          <span id="activeCount" class="font-bold text-amber-400 text-sm">0</span> 作品を表示中
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================= POSTER GALLERY WALL (映画ポスター一覧) ================= -->
+    <div id="posterGalleryWall" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 sm:gap-6">
+      <!-- Rendered dynamically via JS -->
+    </div>
+
+  </main>
+
+  <!-- ================= CINEMA LIGHTBOX SCREENING MODAL ================= -->
+  <div id="cinemaModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl hidden flex items-center justify-center p-4 sm:p-8 overflow-y-auto" onclick="closeCinemaModal(event)">
+    <div class="bg-[#0b0b10] border border-zinc-800 rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl relative my-auto" onclick="event.stopPropagation()">
+      
+      <!-- Close Button -->
+      <button onclick="closeCinemaModalDirect()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-zinc-900/90 text-zinc-400 hover:text-white hover:bg-zinc-800 flex items-center justify-center font-bold text-sm transition z-20">
+        ✕
+      </button>
+
+      <!-- Modal Body -->
+      <div id="cinemaModalContent" class="flex flex-col md:flex-row">
+        <!-- Rendered via JS -->
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= INDIVIDUAL FOCUS BOOTH MODAL (一蘭風・個別集中鑑賞ブース) ================= -->
+  <div id="boothModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-2xl hidden flex flex-col p-4 sm:p-8" onclick="closeBoothModal(event)">
+    <div class="max-w-5xl w-full mx-auto flex-1 flex flex-col" onclick="event.stopPropagation()">
+      
+      <!-- Booth Header -->
+      <div class="flex items-center justify-between border-b border-zinc-800 pb-3 mb-4">
+        <div class="flex items-center gap-2.5">
+          <span class="w-3 h-3 rounded-full bg-red-600"></span>
+          <h2 class="font-cinema-title font-bold text-sm sm:text-base tracking-wider text-white">
+            一蘭風 個別フォーカスブース (CONCENTRATION BOOTH)
+          </h2>
+          <span class="text-[11px] text-zinc-500 font-mono-code hidden sm:inline">〜余計な情報を遮断し、1枚のフライヤーアートと音響に没入〜</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="prevBooth()" class="px-3 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-xs font-mono-code border border-zinc-800">
+            ◀ 前へ
+          </button>
+          <span id="boothIndex" class="text-xs font-mono-code text-amber-400 px-1">1 / 91</span>
+          <button onclick="nextBooth()" class="px-3 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-xs font-mono-code border border-zinc-800">
+            次へ ▶
+          </button>
+          <button onclick="closeBoothModalDirect()" class="ml-2 text-zinc-400 hover:text-white text-base">✕</button>
+        </div>
+      </div>
+
+      <!-- Booth Frame -->
+      <div id="boothBody" class="flex-1 flex flex-col md:flex-row items-center justify-center gap-8 overflow-y-auto p-2">
+        <!-- Rendered via JS -->
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= JAVASCRIPT ================= -->
+  <script>
+    const eventsData = [{"id": "raise-1030", "club_id": "raise", "club_name": "RAISE", "area": "銀座", "station": "銀座駅 直結 / 有楽町駅 徒歩5分", "address": "東京都中央区銀座5-2-1 東急プラザ銀座 6F", "sound": "CUSTOM HIGH-END SOUND SYSTEM", "club_url": "https://raisetokyo.com/", "title": "THE HOUSE OF MASKS at RAISE HALLOWEEN 2026 (DAY 1)", "date": "2026.10.30 (FRI) 20:00〜04:30", "artists": "MASK CAST PERFORMANCES & RAISE ALL STARS", "genre": "All Mix", "fee": "仮装特典: 女性 ¥1,000(3D) / 男性 ¥1,000 OFF", "flyer": "https://raisetokyo.com/cms/wp-content/uploads/2026/10/IMG_9790.jpeg", "backup_flyer": "https://dt58e5nfdvrp5.cloudfront.net/facimg/15505_logo_1636101532.jpg", "is_past": false, "source_url": "https://raisetokyo.com/events/the-house-of-masks-at-raise-halloween-2026/"}, {"id": "raise-1031", "club_id": "raise", "club_name": "RAISE", "area": "銀座", "station": "銀座駅 直結 / 有楽町駅 徒歩5分", "address": "東京都中央区銀座5-2-1 東急プラザ銀座 6F", "sound": "CUSTOM HIGH-END SOUND SYSTEM", "club_url": "https://raisetokyo.com/", "title": "THE HOUSE OF MASKS at RAISE HALLOWEEN 2026 (DAY 2 CLIMAX)", "date": "2026.10.31 (SAT) 20:00〜04:30", "artists": "MASK CAST PERFORMANCES & CELEBRITY DJS", "genre": "All Mix", "fee": "仮装特典: 女性 ¥1,000(3D) / 男性 ¥1,000 OFF", "flyer": "https://raisetokyo.com/cms/wp-content/uploads/2026/10/IMG_9790.jpeg", "backup_flyer": "https://dt58e5nfdvrp5.cloudfront.net/facimg/15505_logo_1636101532.jpg", "is_past": false, "source_url": "https://raisetokyo.com/events/the-house-of-masks-at-raise-halloween-2026/"}, {"id": "raise-1113", "club_id": "raise", "club_name": "RAISE", "area": "銀座", "station": "銀座駅 直結 / 有楽町駅 徒歩5分", "address": "東京都中央区銀座5-2-1 東急プラザ銀座 6F", "sound": "CUSTOM HIGH-END SOUND SYSTEM", "club_url": "https://raisetokyo.com/", "title": "RAISE 5th ANNIVERSARY feat. CAMELPHAT", "date": "2026.11.13 (FRI) 21:00〜04:30", "artists": "CAMELPHAT (Grammy Nominated / Afterlife / Pacha Ibiza), RAISE RESIDENTS", "genre": "Melodic House & Techno", "fee": "Men: ¥6,000(1D) / Women: ¥4,000(1D) (5周年特別公演)", "flyer": "https://raisetokyo.com/cms/wp-content/uploads/2026/09/IMG_9415.jpeg", "backup_flyer": "https://dt58e5nfdvrp5.cloudfront.net/facimg/15505_logo_1636101532.jpg", "is_past": false, "source_url": "https://raisetokyo.com/news/news-3668/"}, {"id": "raise-1128", "club_id": "raise", "club_name": "RAISE", "area": "銀座", "station": "銀座駅 直結 / 有楽町駅 徒歩5分", "address": "東京都中央区銀座5-2-1 東急プラザ銀座 6F", "sound": "CUSTOM HIGH-END SOUND SYSTEM", "club_url": "https://raisetokyo.com/", "title": "RAISE 5th ANNIVERSARY — BLACK PARTY feat. MËSTIZA", "date": "2026.11.28 (SAT) 21:00〜04:30", "artists": "MËSTIZA (Flamenco / Melodic House from Spain), RAISE ALL STARS", "genre": "Melodic House / Afro House", "fee": "Men: ¥5,000(2D) / Women: ¥2,500(2D) (BLACK CODE)", "flyer": "https://mestiza.es/wp-content/uploads/2024/12/deeperscreative-46-REV-scaled.webp", "backup_flyer": "https://dt58e5nfdvrp5.cloudfront.net/facimg/15505_logo_1636101532.jpg", "is_past": false, "source_url": "https://raisetokyo.com/news/"}, {"id": "v2-1030", "club_id": "v2_tokyo", "club_name": "V2 TOKYO", "area": "六本木", "station": "六本木駅 徒歩3分", "address": "東京都港区六本木7-13-7 TOWER OF V2 1F", "sound": "JBL & Martin Audio High-Power", "club_url": "https://www.v2tokyo.com/", "title": "V2TOKYO HELLOWEEN 2026 (WEEKEND NIGHT 1)", "date": "2026.10.30 (FRI) 21:00〜05:00", "artists": "V2 HALLOWEEN CAST & CELEBRITY DJS", "genre": "All Mix / EDM / Halloween Weekend", "fee": "仮装特典: 女性完全入場無料 / 男性 ¥1,000 OFF", "flyer": "https://www.v2tokyo.com/media/20261002ex-1.jpg", "backup_flyer": "https://www.v2tokyo.com/media/previewlogos.jpeg", "is_past": false, "source_url": "https://www.v2tokyo.com/events-calendar/"}, {"id": "v2-1031", "club_id": "v2_tokyo", "club_name": "V2 TOKYO", "area": "六本木", "station": "六本木駅 徒歩3分", "address": "東京都港区六本木7-13-7 TOWER OF V2 1F", "sound": "JBL & Martin Audio High-Power", "club_url": "https://www.v2tokyo.com/", "title": "V2TOKYO HELLOWEEN 2026 (GRAND CLIMAX)", "date": "2026.10.31 (SAT) 20:00〜05:00", "artists": "V2 HALLOWEEN ALL STARS, GUEST MC & DANCERS", "genre": "All Mix / EDM / Halloween Climax", "fee": "仮装特典: 女性完全入場無料 / 賞金付き仮装コンテスト", "flyer": "https://www.v2tokyo.com/media/20261002ex-1.jpg", "backup_flyer": "https://www.v2tokyo.com/media/previewlogos.jpeg", "is_past": false, "source_url": "https://www.v2tokyo.com/events-calendar/"}, {"id": "v2-1203", "club_id": "v2_tokyo", "club_name": "V2 TOKYO", "area": "六本木", "station": "六本木駅 徒歩3分", "address": "東京都港区六本木7-13-7 TOWER OF V2 1F", "sound": "JBL & Martin Audio High-Power", "club_url": "https://www.v2tokyo.com/", "title": "DVBBS DJ SET at V2TOKYO (特別来日単独公演)", "date": "2026.12.03 (THU) 21:00〜05:00", "artists": "DVBBS (World EDM Superstar Duo / Canada / Tsunami), V2 ALL STARS", "genre": "EDM / Bounce / Festival Anthems", "fee": "前売りチケット: ¥4,000 + 1 Drink (当日料金近日発表)", "flyer": "https://www.v2tokyo.com/media/20261203ex.jpg", "backup_flyer": "https://www.v2tokyo.com/media/previewlogos.jpeg", "is_past": false, "source_url": "https://www.v2tokyo.com/events-calendar/"}, {"id": "1oak-1031", "club_id": "1oak_tokyo", "club_name": "1OAK TOKYO", "area": "麻布十番・六本木", "station": "麻布十番駅 7番出口 徒歩1分 / 六本木駅 徒歩10分", "address": "東京都港区麻布十番1丁目4-5 深尾ビル B1F", "sound": "d&b audiotechnik", "club_url": "https://1oak.tokyo/", "title": "1OAK TOKYO HALLOWEEN 2026", "date": "2026.10.31 (SAT) 23:00〜05:00", "artists": "1OAK ALL STARS & CELEBRITY VIP GUESTS", "genre": "Hip Hop / Open Format / Halloween", "fee": "Men: ¥5,000 / Women: ¥2,500 (仮装特典有)", "flyer": "https://1oak.tokyo/assets/img/hero-poster.webp", "backup_flyer": "https://clubbable.blob.core.windows.net/medias/1-OAK-?timestamp=636714309898438895", "is_past": false, "source_url": "https://1oak.tokyo/"}, {"id": "ibex-1023", "club_id": "ibex_tokyo", "club_name": "IBEX TOKYO", "area": "六本木", "station": "六本木駅 徒歩3分", "address": "東京都港区六本木3-11-6 野沢ビル 5F", "sound": "Custom Club Sound System", "club_url": "https://www.ibex-tokyo.net/", "title": "BRICKS WEEKEND PARTY", "date": "2026.10.23 (FRI) 23:00〜05:00", "artists": "Guest DJ: KANGO (from NY), Resident DJ: IVER, DJs: Shinpei, Tatsuya, Micare, Shiori; Dancers: Honey ASS (from Fukuoka), Kikko", "genre": "Hip Hop / NY Beats / Dance", "fee": "Men: ¥3,500(2D) / Women: ¥2,000(2D)", "flyer": "https://2m0evjxtvf9c2cb1.public.blob.vercel-storage.com/uploads/admin/1790841391582-a7cbef57ef51.jpg", "backup_flyer": "https://dt58e5nfdvrp5.cloudfront.net/facimg/52_logo_1644330564.jpg", "is_past": false, "source_url": "https://www.ibex-tokyo.net/en/schedule"}, {"id": "ibex-1030", "club_id": "ibex_tokyo", "club_name": "IBEX TOKYO", "area": "六本木", "station": "六本木駅 徒歩3分", "address": "東京都港区六本木3-11-6 野沢ビル 5F", "sound": "Custom Club Sound System", "club_url": "https://www.ibex-tokyo.net/", "title": "HALLOWEEN SPECIAL at IBEX TOKYO 2026", "date": "2026.10.30 (FRI) 23:00〜05:00", "artists": "Guest DJ: YABLOVE, Resident DJ: IVER, DJs: SUZZY, NALU, SHINPEI, HARUTO; Go Go Dancers: ABY, ZEENA", "genre": "Hip Hop / R&B / Halloween Party", "fee": "仮装特典: 女性優待 / 男性 ¥1,000 OFF", "flyer": "https://2m0evjxtvf9c2cb1.public.blob.vercel-storage.com/uploads/admin/1790841359176-e23a2b9734fc.jpg", "backup_flyer": "https://dt58e5nfdvrp5.cloudfront.net/facimg/52_logo_1644330564.jpg", "is_past": false, "source_url": "https://www.ibex-tokyo.net/en/schedule"}, {"id": "tide-1104", "club_id": "tide_tokyo", "club_name": "Tide Tokyo", "area": "新宿", "station": "新宿駅 徒歩5分 / 新宿三丁目駅 徒歩5分 / 西武新宿駅 徒歩5分", "address": "東京都新宿区歌舞伎町1-2-3 レオ新宿 1F/2F", "sound": "Custom High-End Audio", "club_url": "https://tide-tokyo.com/", "title": "HYPE ON WEDNESDAYS (NOVEMBER SPECIAL)", "date": "2026.11.04 (WED) 22:00〜05:00", "artists": "RESIDENT: GARKO, HAYA & SPECIAL GUESTS", "genre": "Bass / Hip Hop / EDM", "fee": "Men: ¥2,000(1D) / Women: ¥1,000(1D)", "flyer": "https://tide-tokyo.com/wp-content/uploads/2026/10/IMG_0541.jpg", "backup_flyer": "https://tide-tokyo.com/wp-content/uploads/2021/08/cropped-512%C3%97512%E9%BB%92.png", "is_past": false, "source_url": "https://tide-tokyo.com/events/"}, {"id": "neverland-1031", "club_id": "neverland_tokyo", "club_name": "NEVERLAND TOKYO", "area": "渋谷", "station": "渋谷駅 徒歩5分 / 道玄坂上", "address": "東京都渋谷区道玄坂2-21-7 第八矢澤ビル 1F", "sound": "JBL Professional Audio", "club_url": "https://neverland.love/", "title": "NEVERLAND HALLOWEEN CARNIVAL 2026", "date": "2026.10.31 (SAT) 20:00〜05:00", "artists": "NEVERLAND ALL STARS & HALLOWEEN DANCERS", "genre": "All Mix / Halloween Carnival", "fee": "仮装特典: 女性完全入場無料 / 男性優待", "flyer": "https://neverland.love/wp-content/uploads/2026/04/saturday.jpg", "backup_flyer": "https://admin.club-port.com/shared_img/production/1/224/20230125113105.jpg?20230125113105", "is_past": false, "source_url": "https://neverland.love/"}, {"id": "tk-1030", "club_id": "tk_nightclub", "club_name": "TK NIGHTCLUB", "area": "渋谷", "station": "渋谷駅 徒歩3分 (センター街)", "address": "東京都渋谷区宇田川町13-8 ちとせ会館 B1F", "sound": "d&b audiotechnik", "club_url": "https://tk-nightclub.com/", "title": "TK HALLOWEEN PARTY 2026 (WEEKEND NIGHT 1)", "date": "2026.10.30 (FRI) 21:00〜04:30", "artists": "KIYOTO, DRAGO, FTH, TK ALL STARS & HALLOWEEN DANCERS", "genre": "All Mix / Halloween Special", "fee": "仮装特典: 女性完全入場無料 / 男性優待", "flyer": "https://tk-nightclub.com/wp/wp-content/uploads/2026/09/10%E6%9C%88TK-%E5%80%8B%E4%BA%BA%E3%83%95%E3%83%A9%E3%82%A4%E3%83%A4%E3%83%BC-03.webp", "backup_flyer": "https://tk-nightclub.com/wp/wp-content/themes/tk_nightclub/img/common/ogp.jpg", "is_past": false, "source_url": "https://tk-nightclub.com/events/"}, {"id": "tk-1031", "club_id": "tk_nightclub", "club_name": "TK NIGHTCLUB", "area": "渋谷", "station": "渋谷駅 徒歩3分 (センター街)", "address": "東京都渋谷区宇田川町13-8 ちとせ会館 B1F", "sound": "d&b audiotechnik", "club_url": "https://tk-nightclub.com/", "title": "TK HALLOWEEN PARTY 2026 (GRAND CLIMAX)", "date": "2026.10.31 (SAT) 21:00〜04:30", "artists": "TK HALLOWEEN ALL STARS, GUEST MCS & DANCERS", "genre": "All Mix / EDM / Halloween Climax", "fee": "仮装特典: 女性完全入場無料 / 賞金付き仮装コンテスト", "flyer": "https://tk-nightclub.com/wp/wp-content/uploads/2026/09/10%E6%9C%88TK-%E5%80%8B%E4%BA%BA%E3%83%95%E3%83%A9%E3%82%A4%E3%83%A4%E3%83%BC-01.webp", "backup_flyer": "https://tk-nightclub.com/wp/wp-content/themes/tk_nightclub/img/common/ogp.jpg", "is_past": false, "source_url": "https://tk-nightclub.com/events/"}, {"id": "womb-1022", "club_id": "womb", "club_name": "WOMB", "area": "渋谷", "station": "渋谷駅 徒歩8分 / 神泉駅 徒歩5分", "address": "東京都渋谷区円山町2-16", "sound": "PHAZON ACOUSTIC SOUND SYSTEM", "club_url": "https://www.womb.co.jp/", "title": "BABA LOOP -TAKEOVER-", "date": "2026.10.22 (THU) 23:00〜04:30", "artists": "GIORGIO NOLA × JUSTIN TIME × TOSHI × WAN ISSARA", "genre": "Tech House", "fee": "DOOR: ¥2,500 / ADV: ¥1,500", "flyer": "https://images.microcms-assets.io/assets/b898bb943976426d8860f3cf49a3be81/4ee3c826822241c0abd7141249e51976/102226BABA%20LOOP.jpg", "backup_flyer": "https://www.womb.co.jp/_next/image?url=https%3A%2F%2Fimages.microcms-assets.io%2Fassets%2Fb898bb943976426d8860f3cf49a3be81%2F4ee3c826822241c0abd7141249e51976%2F102226BABA%2520LOOP.jpg&w=1080&q=75", "is_past": true, "source_url": "https://www.womb.co.jp/en/events"}, {"id": "womb-1023", "club_id": "womb", "club_name": "WOMB", "area": "渋谷", "station": "渋谷駅 徒歩8分 / 神泉駅 徒歩5分", "address": "東京都渋谷区円山町2-16", "sound": "PHAZON ACOUSTIC SOUND SYSTEM", "club_url": "https://www.womb.co.jp/", "title": "INTER 4TH ANNIVERSARY EDITION", "date": "2026.10.23 (FRI) 23:00〜04:30", "artists": "SHINICHI OSAWA × DJ EMMA × SHANNON BROTHERS × ANNE FUTAGAMI × AKIRA ARASAWA × CAPTAIN 25 × HANNAH × MUSCLE ∞ BROTHERS × STRATAH × YURI VALEN × KUNPEI × SHIHAL", "genre": "Techno / House", "fee": "DOOR: ¥4,000 / ADV: ¥2,500", "flyer": "https://images.microcms-assets.io/assets/b898bb943976426d8860f3cf49a3be81/e8b46cad9f874dddace14035d569616f/102326INTER%204TH%20ANNIV_3%EF%BC%9A4.jpg", "backup_flyer": "https://www.womb.co.jp/_next/image?url=https%3A%2F%2Fimages.microcms-assets.io%2Fassets%2Fb898bb943976426d8860f3cf49a3be81%2Fe8b46cad9f874dddace14035d569616f%2F102326INTER%25204TH%2520ANNIV_3%25EF%25BC%259A4.jpg&w=1080&q=75", "is_past": false, "source_url": "https://www.womb.co.jp/en/events"}, {"id": "womb-1024", "club_id": "womb", "club_name": "WOMB", "area": "渋谷", "station": "渋谷駅 徒歩8分 / 神泉駅 徒歩5分", "address": "東京都渋谷区円山町2-16", "sound": "PHAZON ACOUSTIC SOUND SYSTEM", "club_url": "https://www.womb.co.jp/", "title": "CARTULIS", "date": "2026.10.24 (SAT) 23:00〜04:30", "artists": "Z@P × UNAI TROTTI × Junki Inoue × CHIDA × DSKE × P-YAN × RYOKEI × teppei × YAMA", "genre": "Techno / House / London Sound", "fee": "DOOR: ¥4,000 / ADV: ¥2,500", "flyer": "https://images.microcms-assets.io/assets/b898bb943976426d8860f3cf49a3be81/4af76df5a95641e3969811318e67527e/102426CARTULIS3%C3%974.jpg", "backup_flyer": "https://www.womb.co.jp/_next/image?url=https%3A%2F%2Fimages.microcms-assets.io%2Fassets%2Fb898bb943976426d8860f3cf49a3be81%2F4af76df5a95641e3969811318e67527e%2F102426CARTULIS3%25C3%25974.jpg&w=1080&q=75", "is_past": false, "source_url": "https://www.womb.co.jp/en/events"}, {"id": "womb-1025", "club_id": "womb", "club_name": "WOMB", "area": "渋谷", "station": "渋谷駅 徒歩8分 / 神泉駅 徒歩5分", "address": "東京都渋谷区円山町2-16", "sound": "PHAZON ACOUSTIC SOUND SYSTEM", "club_url": "https://www.womb.co.jp/", "title": "NESTAL", "date": "2026.10.25 (SUN) 23:00〜04:30", "artists": "JUNK.PARK × CHIKA × MUTSUMI PAPA", "genre": "K-POP / All Mix", "fee": "DOOR: ¥3,000 / ADV: ¥2,000", "flyer": "https://images.microcms-assets.io/assets/b898bb943976426d8860f3cf49a3be81/da4b5407a1cf4bf5a85c9b837871f5b8/102526NESTAL.jpg", "backup_flyer": "https://www.womb.co.jp/_next/image?url=https%3A%2F%2Fimages.microcms-assets.io%2Fassets%2Fb898bb943976426d8860f3cf49a3be81%2Fda4b5407a1cf4bf5a85c9b837871f5b8%2F102526NESTAL.jpg&w=1080&q=75", "is_past": false, "source_url": "https://www.womb.co.jp/en/events"}, {"id": "womb-1030", "club_id": "womb", "club_name": "WOMB", "area": "渋谷", "station": "渋谷駅 徒歩8分 / 神泉駅 徒歩5分", "address": "東京都渋谷区円山町2-16", "sound": "PHAZON ACOUSTIC SOUND SYSTEM", "club_url": "https://www.womb.co.jp/", "title": "REPRISE", "date": "2026.10.30 (FRI) 23:00〜04:30", "artists": "AKUA × DJ NOBU × lostbaggage × I-SHA × SHHHHH × imus × HELLO KENNY × YOU FORGOT", "genre": "Techno / Experimental", "fee": "DOOR: ¥4,000 / ADV: ¥2,500", "flyer": "https://images.microcms-assets.io/assets/b898bb943976426d8860f3cf49a3be81/67311f7f6148439186013467670dc10a/103026Reprise.jpg", "backup_flyer": "https://www.womb.co.jp/_next/image?url=https%3A%2F%2Fimages.microcms-assets.io%2Fassets%2Fb898bb943976426d8860f3cf49a3be81%2F67311f7f6148439186013467670dc10a%2F103026Reprise.jpg&w=1080&q=75", "is_past": false, "source_url": "https://www.womb.co.jp/en/events"}, {"id": "womb-1031", "club_id": "womb", "club_name": "WOMB", "area": "渋谷", "station": "渋谷駅 徒歩8分 / 神泉駅 徒歩5分", "address": "東京都渋谷区円山町2-16", "sound": "PHAZON ACOUSTIC SOUND SYSTEM", "club_url": "https://www.womb.co.jp/", "title": "WOMB HALLOWEEN PRESENTS COLLISIONS", "date": "2026.10.31 (SAT) 22:00〜04:30", "artists": "CRAIG RICHARDS × IVAN SMAGGHE × SATOSHI OTSUKI × GABRIEL RAI × CELTER × KOTSU × HIMAWARI × kengotaki", "genre": "Techno / House / Halloween Special", "fee": "仮装特典有: DOOR ¥4,000 (仮装 ¥3,000)", "flyer": "https://images.microcms-assets.io/assets/b898bb943976426d8860f3cf49a3be81/07f9ef5801984857bfdb94d49483c4e2/103126WOMB%20HALLOWEEN.jpeg", "backup_flyer": "https://www.womb.co.jp/_next/image?url=https%3A%2F%2Fimages.microcms-assets.io%2Fassets%2Fb898bb943976426d8860f3cf49a3be81%2F07f9ef5801984857bfdb94d49483c4e2%2F103126WOMB%2520HALLOWEEN.jpeg&w=1080&q=75", "is_past": false, "source_url": "https://www.womb.co.jp/en/events"}, {"id": "womb-1105", "club_id": "womb", "club_name": "WOMB", "area": "渋谷", "station": "渋谷駅 徒歩8分 / 神泉駅 徒歩5分", "address": "東京都渋谷区円山町2-16", "sound": "PHAZON ACOUSTIC SOUND SYSTEM", "club_url": "https://www.womb.co.jp/", "title": "LITTLE HELPERS LABEL SHOWCASE IN TOKYO", "date": "2026.11.05 (THU) 23:00〜04:30", "artists": "BUTANE × TARO TOKO × DJ YOGURT × MASSA × ANNA WAKANA", "genre": "Tech House", "fee": "DOOR: ¥3,000 / ADV: ¥2,000", "flyer": "https://images.microcms-assets.io/assets/b898bb943976426d8860f3cf49a3be81/cb835099f4854ebaa4f95e26ec2f5cbb/IMG_4029.jpeg", "backup_flyer": "https://www.womb.co.jp/_next/image?url=https%3A%2F%2Fimages.microcms-assets.io%2Fassets%2Fb898bb943976426d8860f3cf49a3be81%2Fcb835099f4854ebaa4f95e26ec2f5cbb%2FIMG_4029.jpeg&w=1080&q=75", "is_past": false, "source_url": "https://www.womb.co.jp/en/events"}, {"id": "womb-1106", "club_id": "womb", "club_name": "WOMB", "area": "渋谷", "station": "渋谷駅 徒歩8分 / 神泉駅 徒歩5分", "address": "東京都渋谷区円山町2-16", "sound": "PHAZON ACOUSTIC SOUND SYSTEM", "club_url": "https://www.womb.co.jp/", "title": "06S 25TH ANNIVERSARY", "date": "2026.11.06 (FRI) 23:00〜04:30", "artists": "SPECIAL GUEST: FRICTION, DJ AKi & 06S CREW", "genre": "Drum & Bass / 25th Anniversary", "fee": "DOOR: ¥4,000 / ADV: ¥3,000", "flyer": "https://images.microcms-assets.io/assets/b898bb943976426d8860f3cf49a3be81/2a6629d5ce1a4f5caa08a5e08a18a696/110626%2006S.jpg", "backup_flyer": "https://www.womb.co.jp/_next/image?url=https%3A%2F%2Fimages.microcms-assets.io%2Fassets%2Fb898bb943976426d8860f3cf49a3be81%2F2a6629d5ce1a4f5caa08a5e08a18a696%2F110626%252006S.jpg&w=1080&q=75", "is_past": false, "source_url": "https://www.womb.co.jp/en/events"}, {"id": "womb-1107", "club_id": "womb", "club_name": "WOMB", "area": "渋谷", "station": "渋谷駅 徒歩8分 / 神泉駅 徒歩5分", "address": "東京都渋谷区円山町2-16", "sound": "PHAZON ACOUSTIC SOUND SYSTEM", "club_url": "https://www.womb.co.jp/", "title": "WOMB PRESENTS HERNAN CATTANEO", "date": "2026.11.07 (SAT) 23:00〜04:30", "artists": "HERNAN CATTANEO × DJ OGAWA × RINDEAU × Rio Kawamoto × TORAO × MONKEY TIMERS × GLASS ELEVATOR × YUICHIRO KOTANI", "genre": "Progressive House / Techno / House", "fee": "DOOR: ¥5,000 / ADV: ¥3,500", "flyer": "https://images.microcms-assets.io/assets/b898bb943976426d8860f3cf49a3be81/6d87ea115135449dabffebc4b0e30349/110726HERNAN%20CATTANEO_3%C3%974.jpeg", "backup_flyer": "https://www.womb.co.jp/_next/image?url=https%3A%2F%2Fimages.microcms-assets.io%2Fassets%2Fb898bb943976426d8860f3cf49a3be81%2F6d87ea115135449dabffebc4b0e30349%2F110726HERNAN%2520CATTANEO_3%25C3%25974.jpeg&w=1080&q=75", "is_past": false, "source_url": "https://www.womb.co.jp/en/events"}, {"id": "womb-1113", "club_id": "womb", "club_name": "WOMB", "area": "渋谷", "station": "渋谷駅 徒歩8分 / 神泉駅 徒歩5分", "address": "東京都渋谷区円山町2-16", "sound": "PHAZON ACOUSTIC SOUND SYSTEM", "club_url": "https://www.womb.co.jp/", "title": "PICNIC PEOPLE PANIC", "date": "2026.11.13 (FRI) 23:00〜04:30", "artists": "Roman Flügel × KABUTO × MOODMAN × KATIMI AI × MASAYASU × Timothy Really Lab. × Gero × VJ CAMEL", "genre": "Techno / House", "fee": "DOOR: ¥4,000 / ADV: ¥2,500", "flyer": "https://images.microcms-assets.io/assets/b898bb943976426d8860f3cf49a3be81/e3239c5269944d75acd88d7a643c30c5/111326PPP_3x4.jpg", "backup_flyer": "https://www.womb.co.jp/_next/image?url=https%3A%2F%2Fimages.microcms-assets.io%2Fassets%2Fb898bb943976426d8860f3cf49a3be81%2Fe3239c5269944d75acd88d7a643c30c5%2F111326PPP_3x4.jpg&w=1080&q=75", "is_past": false, "source_url": "https://www.womb.co.jp/en/events"}, {"id": "womb-1120", "club_id": "womb", "club_name": "WOMB", "area": "渋谷", "station": "渋谷駅 徒歩8分 / 神泉駅 徒歩5分", "address": "東京都渋谷区円山町2-16", "sound": "PHAZON ACOUSTIC SOUND SYSTEM", "club_url": "https://www.womb.co.jp/", "title": "RAINBOW DISCO CLUB PRESENTS FOLD", "date": "2026.11.20 (FRI) 23:00〜04:30", "artists": "DJ MARIA., HARUKA, Voicedrone B2B James Newmarch, 悪魔の沼 (AKUMA NO NUMA), kenji Takimi, KIKIORIX, MAYURASHKA, Nari, Manami Sakamoto", "genre": "Techno / House", "fee": "DOOR: ¥4,500 / ADV: ¥3,000", "flyer": "https://images.microcms-assets.io/assets/b898bb943976426d8860f3cf49a3be81/01748d9b90da497d80c7a2eef0e5c403/IG-4x5-RDCxF.jpg", "backup_flyer": "https://www.womb.co.jp/_next/image?url=https%3A%2F%2Fimages.microcms-assets.io%2Fassets%2Fb898bb943976426d8860f3cf49a3be81%2F01748d9b90da497d80c7a2eef0e5c403%2FIG-4x5-RDCxF.jpg&w=1080&q=75", "is_past": false, "source_url": "https://www.womb.co.jp/en/events"}, {"id": "laurel_tokyo-1022", "club_id": "laurel_tokyo", "club_name": "LAUREL TOKYO", "area": "渋谷", "station": "渋谷駅 徒歩7分 / 神泉駅 徒歩3分", "address": "東京都渋谷区道玄坂1-17-9 SK PLAZAビル B1F", "sound": "VOID ACOUSTICS", "club_url": "https://laureltokyo.jp/", "title": "LAUREL THURSDAY", "date": "2026.10.22 (THU) 22:00〜05:00", "artists": "RESIDENT DJ: YU-RI", "genre": "HIPHOP, R&B, REGGAE, ALL GOOD MUSIC", "fee": "Men: ¥2,000/2D / Women: ¥1,000/2D", "flyer": "https://laureltokyo.jp/wp-content/uploads/2026/08/phonto-3%E3%81%AE%E3%82%B3%E3%83%94%E3%83%BC-6.jpg", "backup_flyer": "https://admin.club-port.com/shared_img/production/2/37082/large/20240902150426.jpg?20240902150426", "is_past": true, "source_url": "https://laureltokyo.jp/event/"}, {"id": "laurel_tokyo-1023", "club_id": "laurel_tokyo", "club_name": "LAUREL TOKYO", "area": "渋谷", "station": "渋谷駅 徒歩7分 / 神泉駅 徒歩3分", "address": "東京都渋谷区道玄坂1-17-9 SK PLAZAビル B1F", "sound": "VOID ACOUSTICS", "club_url": "https://laureltokyo.jp/", "title": "LIGHT UP FRIDAY", "date": "2026.10.23 (FRI) 22:00〜05:00", "artists": "RESIDENT DJ: O-KEN, GUEST DJS", "genre": "HIPHOP, R&B, REGGAE, ALL GOOD MUSIC", "fee": "Men: ¥3,000/2D / Women: ¥1,500/2D", "flyer": "https://laureltokyo.jp/wp-content/uploads/2026/08/phonto-3%E3%81%AE%E3%82%B3%E3%83%94%E3%83%BC-6.jpg", "backup_flyer": "https://admin.club-port.com/shared_img/production/2/37082/large/20240902150426.jpg?20240902150426", "is_past": false, "source_url": "https://laureltokyo.jp/event/"}, {"id": "laurel_tokyo-1024", "club_id": "laurel_tokyo", "club_name": "LAUREL TOKYO", "area": "渋谷", "station": "渋谷駅 徒歩7分 / 神泉駅 徒歩3分", "address": "東京都渋谷区道玄坂1-17-9 SK PLAZAビル B1F", "sound": "VOID ACOUSTICS", "club_url": "https://laureltokyo.jp/", "title": "RID3", "date": "2026.10.24 (SAT) 22:00〜05:00", "artists": "GUEST DJ, LAUREL TOKYO RESIDENT DJS", "genre": "HIPHOP, R&B, ALL GOOD MUSIC", "fee": "Men: ¥3,000/2D / Women: ¥1,500/2D", "flyer": "https://laureltokyo.jp/wp-content/uploads/2026/08/phonto-3%E3%81%AE%E3%82%B3%E3%83%94%E3%83%BC-6.jpg", "backup_flyer": "https://admin.club-port.com/shared_img/production/2/37082/large/20240902150426.jpg?20240902150426", "is_past": false, "source_url": "https://laureltokyo.jp/event/"}, {"id": "laurel_tokyo-1025", "club_id": "laurel_tokyo", "club_name": "LAUREL TOKYO", "area": "渋谷", "station": "渋谷駅 徒歩7分 / 神泉駅 徒歩3分", "address": "東京都渋谷区道玄坂1-17-9 SK PLAZAビル B1F", "sound": "VOID ACOUSTICS", "club_url": "https://laureltokyo.jp/", "title": "BLACK OUT", "date": "2026.10.25 (SUN) 22:00〜05:00", "artists": "LAUREL RESIDENT DJS", "genre": "HIPHOP, R&B, ALL GOOD MUSIC", "fee": "Men: ¥2,000/2D / Women: ¥1,000 FREE DRINK", "flyer": "https://laureltokyo.jp/wp-content/uploads/2026/08/phonto-3%E3%81%AE%E3%82%B3%E3%83%94%E3%83%BC-6.jpg", "backup_flyer": "https://admin.club-port.com/shared_img/production/2/37082/large/20240902150426.jpg?20240902150426", "is_past": false, "source_url": "https://laureltokyo.jp/event/"}, {"id": "laurel_tokyo-1026", "club_id": "laurel_tokyo", "club_name": "LAUREL TOKYO", "area": "渋谷", "station": "渋谷駅 徒歩7分 / 神泉駅 徒歩3分", "address": "東京都渋谷区道玄坂1-17-9 SK PLAZAビル B1F", "sound": "VOID ACOUSTICS", "club_url": "https://laureltokyo.jp/", "title": "CANDY MONDAY", "date": "2026.10.26 (MON) 22:00〜05:00", "artists": "GUEST DJ: ASK INFO, RESIDENT DJS", "genre": "HIPHOP, R&B, ALL OPEN FORMAT", "fee": "Men: ¥2,000/2D / Women: ¥1,000/2D", "flyer": "https://laureltokyo.jp/wp-content/uploads/2026/08/phonto-3%E3%81%AE%E3%82%B3%E3%83%94%E3%83%BC-6.jpg", "backup_flyer": "https://admin.club-port.com/shared_img/production/2/37082/large/20240902150426.jpg?20240902150426", "is_past": false, "source_url": "https://laureltokyo.jp/event/"}, {"id": "laurel_tokyo-1027", "club_id": "laurel_tokyo", "club_name": "LAUREL TOKYO", "area": "渋谷", "station": "渋谷駅 徒歩7分 / 神泉駅 徒歩3分", "address": "東京都渋谷区道玄坂1-17-9 SK PLAZAビル B1F", "sound": "VOID ACOUSTICS", "club_url": "https://laureltokyo.jp/", "title": "J-RAP NIGHT", "date": "2026.10.27 (TUE) 22:00〜05:00", "artists": "LAUREL TOKYO RESIDENT DJ: HERO, WTO BLND, Ryo-hey", "genre": "J-RAP ONLY / Hip-Hop", "fee": "Men: ¥2,000/2D / Women: ¥1,000/2D", "flyer": "https://laureltokyo.jp/wp-content/uploads/2026/08/E946838A-C61C-4454-BE32-D27AA3AB6EDC-2.jpg", "backup_flyer": "https://laureltokyo.jp/wp-content/uploads/2026/08/phonto-3%E3%81%AE%E3%82%B3%E3%83%94%E3%83%BC-6.jpg", "is_past": false, "source_url": "https://laureltokyo.jp/event/"}, {"id": "laurel_tokyo-1029", "club_id": "laurel_tokyo", "club_name": "LAUREL TOKYO", "area": "渋谷", "station": "渋谷駅 徒歩7分 / 神泉駅 徒歩3分", "address": "東京都渋谷区道玄坂1-17-9 SK PLAZAビル B1F", "sound": "VOID ACOUSTICS", "club_url": "https://laureltokyo.jp/", "title": "LAUREL THURSDAY", "date": "2026.10.29 (THU) 22:00〜05:00", "artists": "RESIDENT DJ: YU-RI", "genre": "HIPHOP, R&B, REGGAE, ALL GOOD MUSIC", "fee": "Men: ¥2,000/2D / Women: ¥1,000/2D", "flyer": "https://laureltokyo.jp/wp-content/uploads/2026/08/phonto-3%E3%81%AE%E3%82%B3%E3%83%94%E3%83%BC-6.jpg", "backup_flyer": "https://admin.club-port.com/shared_img/production/2/37082/large/20240902150426.jpg?20240902150426", "is_past": false, "source_url": "https://laureltokyo.jp/event/"}, {"id": "laurel_tokyo-1030", "club_id": "laurel_tokyo", "club_name": "LAUREL TOKYO", "area": "渋谷", "station": "渋谷駅 徒歩7分 / 神泉駅 徒歩3分", "address": "東京都渋谷区道玄坂1-17-9 SK PLAZAビル B1F", "sound": "VOID ACOUSTICS", "club_url": "https://laureltokyo.jp/", "title": "LIGHT UP FRIDAY - HALLOWEEN SPECIAL -", "date": "2026.10.30 (FRI) 22:00〜05:00", "artists": "RESIDENT DJ: O-KEN, HALLOWEEN CREW", "genre": "HIPHOP, R&B, REGGAE, ALL GOOD MUSIC", "fee": "Men: ¥3,000/2D / Women: ¥1,500/2D", "flyer": "https://laureltokyo.jp/wp-content/uploads/2026/08/phonto-3%E3%81%AE%E3%82%B3%E3%83%94%E3%83%BC-6.jpg", "backup_flyer": "https://admin.club-port.com/shared_img/production/2/37082/large/20240902150426.jpg?20240902150426", "is_past": false, "source_url": "https://laureltokyo.jp/event/"}, {"id": "laurel_tokyo-1031", "club_id": "laurel_tokyo", "club_name": "LAUREL TOKYO", "area": "渋谷", "station": "渋谷駅 徒歩7分 / 神泉駅 徒歩3分", "address": "東京都渋谷区道玄坂1-17-9 SK PLAZAビル B1F", "sound": "VOID ACOUSTICS", "club_url": "https://laureltokyo.jp/", "title": "PUNCH LINE - HALLOWEEN NIGHT -", "date": "2026.10.31 (SAT) 22:00〜05:00", "artists": "GUEST DJS & LAUREL TOKYO ALL STARS", "genre": "HIPHOP, R&B, REGGAE, ALL GOOD MUSIC", "fee": "Men: ¥3,000/2D / Women: ¥1,500/2D", "flyer": "https://laureltokyo.jp/wp-content/uploads/2026/08/phonto-3%E3%81%AE%E3%82%B3%E3%83%94%E3%83%BC-6.jpg", "backup_flyer": "https://admin.club-port.com/shared_img/production/2/37082/large/20240902150426.jpg?20240902150426", "is_past": false, "source_url": "https://laureltokyo.jp/event/"}, {"id": "harlem-1022", "club_id": "harlem", "club_name": "HARLEM", "area": "渋谷", "station": "渋谷駅 徒歩7分", "address": "東京都渋谷区円山町2-4 ドクタージーカンズビル 2F/3F", "sound": "Pioneer Pro Audio", "club_url": "https://www.harlem.co.jp/", "title": "ECLECTIQUE (HARLEM) / HARBOR Vol.7 (BX CAFE)", "date": "2026.10.22 (THU) 22:00〜04:30", "artists": "HARLEM: DJ Leominati & MC Mighty (from Bangkok Invaders), HOKUTO, FUJI TRILL / BX CAFE: TIGU, SHO, NIKE, RASH BONE, YZERO, MASAMI", "genre": "Hip Hop / Party Music / R&B", "fee": "22:00〜25:00: ¥500(1D) / After 25:00: 女性 ¥1,000(1D), 男性 ¥2,000(1D) / 20歳無料", "flyer": "https://www.harlem.co.jp/_src/97835529/flyer_20261022_420.png", "backup_flyer": "https://www.harlem.co.jp/_src/98267206/flyer_20261022_bx_420.jpg", "is_past": true, "source_url": "https://www.harlem.co.jp/party/regular/thu_4th.html"}, {"id": "harlem-1023", "club_id": "harlem", "club_name": "HARLEM", "area": "渋谷", "station": "渋谷駅 徒歩7分", "address": "東京都渋谷区円山町2-4 ドクタージーカンズビル 2F/3F", "sound": "Pioneer Pro Audio", "club_url": "https://www.harlem.co.jp/", "title": "BORN FREE SPECIAL feat. Miles Medina (HARLEM) / DANCEHALL SHOOTER (BX CAFE)", "date": "2026.10.23 (FRI) 22:00〜04:30", "artists": "HARLEM: Miles Medina (Special Guest), ALAMAKI, Mark West, NOVA, MC McQueen / BX CAFE: DJ KIXXX (MASTERPIECE SOUND), BUSTER / SLEEPY HYPE, FUMIYA", "genre": "Hip Hop / Dancehall / Reggae / Party", "fee": "DOOR: 女性 ¥2,000 / 男性 ¥3,000 (24:00まで ¥1,000/1D, 20歳入場無料)", "flyer": "https://www.harlem.co.jp/_src/98267264/flyer_20261023_420.jpg", "backup_flyer": "https://images.iflyer.tv/bw_1920/bh_1080/pf_1/venue/1_3d0e1c0icehqi5r4auanh.jpg", "is_past": false, "source_url": "https://www.harlem.co.jp/party/regular/fri_4th_.html"}, {"id": "harlem-1024", "club_id": "harlem", "club_name": "HARLEM", "area": "渋谷", "station": "渋谷駅 徒歩7分", "address": "東京都渋谷区円山町2-4 ドクタージーカンズビル 2F/3F", "sound": "Pioneer Pro Audio", "club_url": "https://www.harlem.co.jp/", "title": "MONSTER feat. Bangkok Invaders (HARLEM) / Blue Mood (BX CAFE)", "date": "2026.10.24 (SAT) 22:00〜04:30", "artists": "HARLEM: DJ Leominati & MC Mighty (from Bangkok Invaders), HAZIME, WATARAI, HOKUTO, KIXXX, TIGU, NOGU, KOUJIRO, GoGo Dancer: Yuna, Aja, MC: YOU-KID / BX CAFE: keigo, Kouichi Arakawa, TAKA & Tossy, Chazzy, MUSASHI, YANA", "genre": "Hip Hop / Party / Trap / R&B", "fee": "DOOR: 女性 ¥2,000 / 男性 ¥3,000 (24:00まで ¥1,000/1D, 20歳入場無料)", "flyer": "https://www.harlem.co.jp/_src/98232365/flyer_20261024_420.jpg", "backup_flyer": "https://www.harlem.co.jp/_src/98078330/flyer_20261024_bx_420.jpg", "is_past": false, "source_url": "https://www.harlem.co.jp/party/regular/sat_4th.html"}, {"id": "harlem-1027", "club_id": "harlem", "club_name": "HARLEM", "area": "渋谷", "station": "渋谷駅 徒歩7分", "address": "東京都渋谷区円山町2-4 ドクタージーカンズビル 2F/3F", "sound": "Pioneer Pro Audio", "club_url": "https://www.harlem.co.jp/", "title": "PLANET TUESDAY feat. SSSOUND (HARLEM) / STEEZY vol.12 -3rd Anniv.- (BX CAFE)", "date": "2026.10.27 (TUE) 22:00〜04:30", "artists": "HARLEM: SSSOUND (GINGER BOY, RAKOTO 3000, HONY ZUKA from France), VLOT, REVOLVER, New J, NOGU, NAOYA, YUITO, KANON / BX CAFE: SHUNSUKE, MOTOMICHI, SIN-TARO, TAKE, Buckroll, HARUTO", "genre": "Hip Hop / Club Hits / Global Beats", "fee": "22:00〜25:00: ¥500(1D) / After 25:00: 女性 ¥1,000(1D), 男性 ¥3,000(1D) / 20歳無料", "flyer": "https://www.harlem.co.jp/_src/98287338/flyer_20261027_420.jpg", "backup_flyer": "https://www.harlem.co.jp/_src/98198511/flyer_20261027_bx_420.jpg", "is_past": false, "source_url": "https://www.harlem.co.jp/party/regular/tue_4th.html"}, {"id": "harlem-1029", "club_id": "harlem", "club_name": "HARLEM", "area": "渋谷", "station": "渋谷駅 徒歩7分", "address": "東京都渋谷区円山町2-4 ドクタージーカンズビル 2F/3F", "sound": "Pioneer Pro Audio", "club_url": "https://www.harlem.co.jp/", "title": "ECLECTIQUE (HARLEM) / VENOM (BX CAFE)", "date": "2026.10.29 (THU) 23:00〜04:30", "artists": "HARLEM: HOKUTO, FUJI TRILL / BX CAFE: YUTARO, BOH-GEN, UMI, CHRIS, TOMI-NORI, KANATO, Akira, Marco, Rick&NAGISA, Earth-u", "genre": "Hip Hop / Eclectic / Party Music", "fee": "23:00〜25:00: ¥500(1D) / After 25:00: 女性 ¥1,000(1D), 男性 ¥3,000(1D) / 20歳無料", "flyer": "https://www.harlem.co.jp/_src/98287514/flyer_20261029_bx_420.jpg", "backup_flyer": "https://www.harlem.co.jp/_src/97976179/flyer_nowprint.jpg", "is_past": false, "source_url": "https://www.harlem.co.jp/party/regular/thu_5th.html"}, {"id": "harlem-1030", "club_id": "harlem", "club_name": "HARLEM", "area": "渋谷", "station": "渋谷駅 徒歩7分", "address": "東京都渋谷区円山町2-4 ドクタージーカンズビル 2F/3F", "sound": "Pioneer Pro Audio", "club_url": "https://www.harlem.co.jp/", "title": "BORN FREE HALLOWEEN SPECIAL feat. Mike Roc (HARLEM) / THE RULERZ (BX CAFE)", "date": "2026.10.30 (FRI) 22:00〜04:30", "artists": "HARLEM: Mike Roc (Special Guest), ALAMAKI, Mark West, New J, NOVA / BX CAFE: HOKUTO, YOU-KID, NOGU, KOUJIRO, NAOYA, Mr.Take1, Rash Bone, YUITO, YZERO", "genre": "Hip Hop / Halloween Special / Party", "fee": "DOOR: 女性 ¥2,000 / 男性 ¥3,000 (24:00まで ¥1,000/1D, 20歳無料)", "flyer": "https://www.harlem.co.jp/_src/98305972/flyer_20261030_420.jpg", "backup_flyer": "https://www.harlem.co.jp/_src/98178501/flyer_20261030_bx_420.jpg", "is_past": false, "source_url": "https://www.harlem.co.jp/party/regular/fri_5th_.html"}, {"id": "harlem-1031", "club_id": "harlem", "club_name": "HARLEM", "area": "渋谷", "station": "渋谷駅 徒歩7分", "address": "東京都渋谷区円山町2-4 ドクタージーカンズビル 2F/3F", "sound": "Pioneer Pro Audio", "club_url": "https://www.harlem.co.jp/", "title": "MONSTER SP <HALLOWEEN OBEY × HARLEM> (HARLEM) / BORNFREE SP <HALLOWEEN OBEY × BX CAFE>", "date": "2026.10.31 (SAT) 22:00〜04:30", "artists": "HARLEM: HAZIME, HOKUTO, KIXXX (MASTERPIECE SOUND), TIGU, NOGU, KOUJIRO, NAOYA (98jams), GoGo: Icy Riri, Aja, Yasuna, RIKAKO, MC: YOU-KID, VJ: CANSER graphix / BX CAFE: ALAMAKI, Mark West, McQueen, NYI, JOSE", "genre": "Hip Hop / Halloween Climax / OBEY Collaboration", "fee": "DOOR: 女性 ¥2,000 / 男性 ¥3,000 (24:00まで ¥1,000/1D, 仮装特典あり)", "flyer": "https://www.harlem.co.jp/_src/98232367/flyer_20261031_420.jpg", "backup_flyer": "https://www.harlem.co.jp/_src/98232369/flyer_20261031_bx_420.jpg", "is_past": false, "source_url": "https://www.harlem.co.jp/party/regular/sat_5th.html"}, {"id": "clubasia-1022", "club_id": "clubasia", "club_name": "clubasia", "area": "渋谷", "station": "渋谷駅 徒歩8分 / 神泉駅 徒歩3分", "address": "東京都渋谷区円山町1-8", "sound": "FUNKTION-ONE SYSTEM", "club_url": "https://clubasia.jp/", "title": "clubasia RASTA THURSDAY × clubasia THURSDAY", "date": "2026.10.22 (THU) 23:00〜05:00", "artists": "OG Militant B, Shoma fr, dambosound, Sekitova, Mykey, and more", "genre": "DanceHall / Reggae / Electro / Techno", "fee": "DOOR: ¥1,000", "flyer": "https://imgproxy.ra.co/_/quality:66/aHR0cHM6Ly9pbWFnZXMucmEuY28vOTFlZTI5MTM3OTkyZDgyNGE3MmQ4N2RjYjdjNjdhMTJlYTU2NDY4Yi5qcGc=", "backup_flyer": "https://framerusercontent.com/images/xqr5EQ5TFfiZnC5xOSst4bKkQ.png?width=2501&height=1084", "is_past": true, "source_url": "https://clubasia.jp/events"}, {"id": "clubasia-1023", "club_id": "clubasia", "club_name": "clubasia", "area": "渋谷", "station": "渋谷駅 徒歩8分 / 神泉駅 徒歩3分", "address": "東京都渋谷区円山町1-8", "sound": "FUNKTION-ONE SYSTEM", "club_url": "https://clubasia.jp/", "title": "𝐂𝐇𝐑Ø𝐍𝐎𝐒 𝟐𝐧𝐝 𝐀𝐧𝐧𝐢𝐯𝐞𝐫𝐬𝐚𝐫𝐲", "date": "2026.10.23 (FRI) 23:00〜05:00", "artists": "MAIN: EVE, DALJAE, tatashouta, Rojuu with yushun, neqr, LAUWEND; 2F: SPRINGLING, txmabxi, Sunimania, meme'z, 彪, TEI TEI; LOUNGE: SOGEN × 4u*, 冥界と紡ぐ, fogsettings, カゲヤマユウゾウØ, XINOVI, EMILIO", "genre": "HardTechno / Club / Industrial", "fee": "DOOR: ¥4,300(1D) / ADV: ¥3,000(1D)", "flyer": "https://framerusercontent.com/images/BGhQtrFCLyZbojpWQ8WpoQBxbc.jpg", "backup_flyer": "https://media.zaiko.io/zaiko/w_1200/1_4bujhw8s1uv9321dvted6", "is_past": false, "source_url": "https://clubasia.jp/events/%F0%9D%90%82%F0%9D%90%87%F0%9D%90%91%C3%B8%F0%9D%90%8D%F0%9D%90%8E%F0%9D%90%92-%F0%9D%9F%90%F0%9D%90%A7%F0%9D%90%9D-%F0%9D%90%80%F0%9D%90%A7%F0%9D%90%A7%F0%9D%90%A2%F0%9D%90%AF%F0%9D%90%9E%F0%9D%90%AB%F0%9D%90%AC%F0%9D%90%9A%F0%9D%90%AB%F0%9D%90%B2"}, {"id": "clubasia-1024", "club_id": "clubasia", "club_name": "clubasia", "area": "渋谷", "station": "渋谷駅 徒歩8分 / 神泉駅 徒歩3分", "address": "東京都渋谷区円山町1-8", "sound": "FUNKTION-ONE SYSTEM", "club_url": "https://clubasia.jp/", "title": "Circle eight", "date": "2026.10.24 (SAT) 23:00〜05:00", "artists": "Special Guest Live: Saggypants Shimba; Live: Assquake, Ash, KEBBY, JOJ, 阿吽, Loutepatty, Loh K; DJs: BENNY, PB, CONAN, Keigo, PwaPwa, Ryosukzzz, KUMA, Kaede, Yutaro, Riku, Shion, 非乳化, Chimu, shochan, SHIHAL, RIA, zutiwo; Gogo: Ann a.k.a. Badkitten; Barber: SLATT CLUB; Tattoo: Seijiro", "genre": "HipHop / Trap / All Good Music", "fee": "DOOR: ¥3,000", "flyer": "https://framerusercontent.com/images/c6OMkSPy9k4NDFrbFsUO8puklA.jpg?width=1144&height=1430", "backup_flyer": "https://imgproxy.ra.co/_/quality:66/aHR0cHM6Ly9pbWFnZXMucmEuY28vN2QxNzI0YmI0NjYwZTA3ODkzOTIxNjQ4NDdjZjI3YjgyMDZlZDQ1Ny5wbmc=", "is_past": false, "source_url": "https://clubasia.jp/events/261024club"}, {"id": "clubasia-1025", "club_id": "clubasia", "club_name": "clubasia", "area": "渋谷", "station": "渋谷駅 徒歩8分 / 神泉駅 徒歩3分", "address": "東京都渋谷区円山町1-8", "sound": "FUNKTION-ONE SYSTEM", "club_url": "https://clubasia.jp/", "title": "魔界難入 Vol.5", "date": "2026.10.25 (SUN) 23:00〜05:00", "artists": "2F Act: BYORA, Can, Daichi Wago, DJ MAYAKU, ICHIRO, nano odorine, Nobou, yella goat, syu yoshida, 山崎奏太郎; 1F Exhibition: ARATA ITO, NAOHIRO YOSHIDA", "genre": "HipHop / Experimental / Art Party", "fee": "DOOR: ¥3,500(+1D)", "flyer": "https://framerusercontent.com/images/siuBY5jtKWNlPChaprWhgdbgYcE.jpg?width=1144&height=1430", "backup_flyer": "https://framerusercontent.com/images/xqr5EQ5TFfiZnC5xOSst4bKkQ.png?width=2501&height=1084", "is_past": false, "source_url": "https://clubasia.jp/events/makai-irigatashi-5-261025"}, {"id": "clubasia-1026", "club_id": "clubasia", "club_name": "clubasia", "area": "渋谷", "station": "渋谷駅 徒歩8分 / 神泉駅 徒歩3分", "address": "東京都渋谷区円山町1-8", "sound": "FUNKTION-ONE SYSTEM", "club_url": "https://clubasia.jp/", "title": "GOTICA CLUB × infuse into", "date": "2026.10.26 (MON) 23:00〜05:00", "artists": "GOTICA CLUB RESIDENTS & infuse into ALL STARS", "genre": "Techno / HardTechno / Schranz", "fee": "DOOR: ¥2,000", "flyer": "https://imgproxy.ra.co/_/quality:66/aHR0cHM6Ly9pbWFnZXMucmEuY28vMGYyMzhmZmVjYTkwYWQzMzFmZTNkZmY1ZTEzNGNjYTJlOTk1YTEzMC5wbmc=", "backup_flyer": "https://framerusercontent.com/images/xqr5EQ5TFfiZnC5xOSst4bKkQ.png?width=2501&height=1084", "is_past": false, "source_url": "https://clubasia.jp/events"}, {"id": "clubasia-1027", "club_id": "clubasia", "club_name": "clubasia", "area": "渋谷", "station": "渋谷駅 徒歩8分 / 神泉駅 徒歩3分", "address": "東京都渋谷区円山町1-8", "sound": "FUNKTION-ONE SYSTEM", "club_url": "https://clubasia.jp/", "title": "PARTY HARD TUESDAY", "date": "2026.10.27 (TUE) 24:00〜05:00", "artists": "PARTY HARD CREW, SOUND SYSTEM SELECTORS, DANCEHALL DANCERS", "genre": "Reggae / DanceHall / Club Hits", "fee": "DOOR: ¥1,500(1D)", "flyer": "https://imgproxy.ra.co/_/quality:66/aHR0cHM6Ly9pbWFnZXMucmEuY28vOTJlZDRkZjFlNzg2YTNkOTcyZjhkMTEyNTQ5ZjBhMzU1ODY4ZWY5Ny5qcGc=", "backup_flyer": "https://framerusercontent.com/images/xqr5EQ5TFfiZnC5xOSst4bKkQ.png?width=2501&height=1084", "is_past": false, "source_url": "https://clubasia.jp/events"}, {"id": "clubasia-1028", "club_id": "clubasia", "club_name": "clubasia", "area": "渋谷", "station": "渋谷駅 徒歩8分 / 神泉駅 徒歩3分", "address": "東京都渋谷区円山町1-8", "sound": "FUNKTION-ONE SYSTEM", "club_url": "https://clubasia.jp/", "title": "EXODUS vol.256｜HALLOWEEN SPECIAL", "date": "2026.10.28 (WED) 23:00〜06:00", "artists": "FUJI TRILL, Jellyf!sh, EXODUS ALL STARS, GUEST DJS & BEATMAKERS; Booths: LIVE PAINT, LIVE TATTOO, EXHIBITION", "genre": "HipHop / Rock / Drum & Bass / Phonk / Halloween Special", "fee": "DOOR: ¥3,000(1D) / ADV: ¥2,000(1D)", "flyer": "https://imgproxy.ra.co/_/quality:66/aHR0cHM6Ly9pbWFnZXMucmEuY28vMGYyMzhmZmVjYTkwYWQzMzFmZTNkZmY1ZTEzNGNjYTJlOTk1YTEzMC5wbmc=", "backup_flyer": "https://framerusercontent.com/images/xqr5EQ5TFfiZnC5xOSst4bKkQ.png?width=2501&height=1084", "is_past": false, "source_url": "https://clubasia.jp/events/261028"}, {"id": "clubasia-1029", "club_id": "clubasia", "club_name": "clubasia", "area": "渋谷", "station": "渋谷駅 徒歩8分 / 神泉駅 徒歩3分", "address": "東京都渋谷区円山町1-8", "sound": "FUNKTION-ONE SYSTEM", "club_url": "https://clubasia.jp/", "title": "vandalo", "date": "2026.10.29 (THU) 23:00〜05:00", "artists": "CALPISS, Moodman, Rami, Shoma fr,dambosound, SOGI, and more (FRONTSTAGE & BACKSTAGE)", "genre": "House / Minimal / Dub / Disco", "fee": "DOOR: ¥2,000 / ADV: ¥1,000", "flyer": "https://imgproxy.ra.co/_/quality:66/aHR0cHM6Ly9pbWFnZXMucmEuY28vYTlkNjViYWZiODBkZmZiZjZiM2MwNjUyOGE5NTE1NTc4OWMzNjk4ZS5qcGc=", "backup_flyer": "https://framerusercontent.com/images/xqr5EQ5TFfiZnC5xOSst4bKkQ.png?width=2501&height=1084", "is_past": false, "source_url": "https://clubasia.jp/events/vandalo-261029"}, {"id": "clubasia-1030", "club_id": "clubasia", "club_name": "clubasia", "area": "渋谷", "station": "渋谷駅 徒歩8分 / 神泉駅 徒歩3分", "address": "東京都渋谷区円山町1-8", "sound": "FUNKTION-ONE SYSTEM", "club_url": "https://clubasia.jp/", "title": "YAGIKYUN HALLOWEEN PARTY 2K26 -N² 1st Album 『iDANCE2MUSIC』 release party-", "date": "2026.10.30 (FRI) 23:00〜05:00", "artists": "N², オカモトレイジ (OKAMOTO'S / YAGI EXHIBITION), DNOPF, SO-SO, ecec, TOMMY(BOY), BiBiyua, Jackson Kaki, Chibichael, 6.do; POP UP: PUREM1ND", "genre": "HipHop / Punk / Electronic / Halloween Party", "fee": "DOOR: ¥4,000(1D) / ADV: ¥3,000(1D) / UNDER23: ¥2,000(1D) (D別 ¥700)", "flyer": "https://framerusercontent.com/images/mNPXtno5sBs6vIQ14n3GFuU3k.jpg?width=2160&height=2700", "backup_flyer": "https://framerusercontent.com/images/5vxYAHR2a1mASDXCqB570YLsQXE.jpg?width=2480&height=3508", "is_past": false, "source_url": "https://clubasia.jp/en/events/261030-yagikyunhalloween"}, {"id": "clubasia-1031", "club_id": "clubasia", "club_name": "clubasia", "area": "渋谷", "station": "渋谷駅 徒歩8分 / 神泉駅 徒歩3分", "address": "東京都渋谷区円山町1-8", "sound": "FUNKTION-ONE SYSTEM", "club_url": "https://clubasia.jp/", "title": "EMO NIGHT HALLOWEEN 2026", "date": "2026.10.31 (SAT) 22:30〜05:00", "artists": "Live Bands: Paramore covers, GiriGiri (Blink182 covers), Good Grief, Slipknock (Slipknot covers), Given by the Flames, Heartfield; DJs: Tom (2F), DJ SUBURBIA (Bar), BURNING SANDWICHE 1号 (Main Floor)", "genre": "Emo / Pop Punk / Rock / Alternative Metal / Halloween", "fee": "DOOR: ¥3,300(+1D ¥700) / ADV: ¥2,800(+1D ¥700)", "flyer": "https://imgproxy.ra.co/_/quality:66/aHR0cHM6Ly9pbWFnZXMucmEuY28vNTE1YjRmNjE5NTBlMDkxOGEyOGJhZTQ1OGU4YzlkYWI4NWJjYTA0Yy5wbmc=", "backup_flyer": "https://framerusercontent.com/images/xqr5EQ5TFfiZnC5xOSst4bKkQ.png?width=2501&height=1084", "is_past": false, "source_url": "https://ra.co/events/2556709"}, {"id": "circus_tokyo-1023", "club_id": "circus_tokyo", "club_name": "CIRCUS TOKYO", "area": "渋谷", "station": "渋谷駅 徒歩4分", "address": "東京都渋谷区渋谷3-26-16 第五叶ビル 1F/B1F", "sound": "FUNKTION-ONE", "club_url": "https://circus-tokyo.jp/", "title": "CIRCUS TOKYO 11TH ANNIVERSARY DAY1", "date": "2026.10.23 (FRI) 23:00〜05:00", "artists": "MAKOTO (HUMAN ELEMENTS), nasthug, SAKO B2B MOUNTAIN, HEAVEN'S GATE CREW, M.I.O", "genre": "Drum & Bass / Bass / Club Music", "fee": "DOOR: ¥3,500 / ADV: ¥3,000", "flyer": "https://circus-tokyo.jp/wp-content/uploads/2026/10/20261023.jpg", "backup_flyer": "https://circus-tokyo.jp/wp-content/uploads/2025/04/ogp.jpg", "is_past": false, "source_url": "https://circus-tokyo.jp/event/circus-tokyo-11th-anniversary-day1/"}, {"id": "circus_tokyo-1024", "club_id": "circus_tokyo", "club_name": "CIRCUS TOKYO", "area": "渋谷", "station": "渋谷駅 徒歩4分", "address": "東京都渋谷区渋谷3-26-16 第五叶ビル 1F/B1F", "sound": "FUNKTION-ONE", "club_url": "https://circus-tokyo.jp/", "title": "CIRCUS TOKYO 11TH ANNIVERSARY DAY2", "date": "2026.10.24 (SAT) 23:00〜05:00", "artists": "DJ HAUS (UTTU / UK), guchon, kengotaki, Licaxxx, okadada, shucream, MANDO, gino, RISE, Tomoya", "genre": "House / UKG / UK Bass / Rave", "fee": "DOOR: ¥3,500 / ADV: ¥3,000", "flyer": "https://circus-tokyo.jp/wp-content/uploads/2026/10/ca66e2cf-ffb4-450e-a177-ed6fc5407c28.jpg", "backup_flyer": "https://circus-tokyo.jp/wp-content/uploads/2025/04/ogp.jpg", "is_past": false, "source_url": "https://circus-tokyo.jp/event/circus-tokyo-11th-anniversary-day2/"}, {"id": "circus_tokyo-1031", "club_id": "circus_tokyo", "club_name": "CIRCUS TOKYO", "area": "渋谷", "station": "渋谷駅 徒歩4分", "address": "東京都渋谷区渋谷3-26-16 第五叶ビル 1F/B1F", "sound": "FUNKTION-ONE", "club_url": "https://circus-tokyo.jp/", "title": "RIP with Osmosis Jones (HALLOWEEN SPECIAL)", "date": "2026.10.31 (SAT) 23:00〜05:00", "artists": "Osmosis Jones (AUS), J Wax (UK), Genick B2B Acrocanthosaurus, Kamui Wada, kyo B2B Mathie D; -1F- MOOTOE, OBXR. B2B Jacotanu, OTA, That Fancy I B2B KO3, tsumi, VECSILLE", "genre": "Bass Music / UK Garage / Techno / Halloween", "fee": "DOOR: ¥3,500 / ADV: ¥3,000 / Early Bird: ¥2,000", "flyer": "https://circus-tokyo.jp/wp-content/uploads/2026/08/RIPwithOJ_FULL_Small.jpg", "backup_flyer": "https://circus-tokyo.jp/wp-content/uploads/2025/04/ogp.jpg", "is_past": false, "source_url": "https://circus-tokyo.jp/event/rip-with-osmosis-jones/"}, {"id": "circus_tokyo-1113", "club_id": "circus_tokyo", "club_name": "CIRCUS TOKYO", "area": "渋谷", "station": "渋谷駅 徒歩4分", "address": "東京都渋谷区渋谷3-26-16 第五叶ビル 1F/B1F", "sound": "FUNKTION-ONE", "club_url": "https://circus-tokyo.jp/", "title": "Louis the Child in Tokyo (COOP RECS PRESENTS)", "date": "2026.11.13 (FRI) 23:00〜05:00", "artists": "Louis The Child and more", "genre": "Electronic / Future Bass / Pop Dance", "fee": "ADV: ¥4,500", "flyer": "https://circus-tokyo.jp/wp-content/uploads/2025/04/ogp.jpg", "backup_flyer": "https://circus-tokyo.jp/wp-content/uploads/2025/04/ogp.jpg", "is_past": false, "source_url": "https://circus-tokyo.jp/event/louis-the-child/"}, {"id": "circus_tokyo-1121", "club_id": "circus_tokyo", "club_name": "CIRCUS TOKYO", "area": "渋谷", "station": "渋谷駅 徒歩4分", "address": "東京都渋谷区渋谷3-26-16 第五叶ビル 1F/B1F", "sound": "FUNKTION-ONE", "club_url": "https://circus-tokyo.jp/", "title": "11.21-TSHA JAPAN TOUR TOKYO-", "date": "2026.11.21 (SAT) 23:00〜05:00", "artists": "TSHA (UK / Ninja Tune / DC-10 Ibiza)", "genre": "Melodic House / UK Garage / Rave", "fee": "ADV: ¥3,000", "flyer": "https://circus-tokyo.jp/wp-content/uploads/2025/04/ogp.jpg", "backup_flyer": "https://circus-tokyo.jp/wp-content/uploads/2025/04/ogp.jpg", "is_past": false, "source_url": "https://circus-tokyo.jp/event/1807/"}, {"id": "enter_shibuya-1023", "club_id": "enter_shibuya", "club_name": "ENTER", "area": "渋谷", "station": "渋谷駅 徒歩3分 (宮下パーク至近)", "address": "東京都渋谷区神宮前6-19-17 GEMS神宮前 B1F", "sound": "CUSTOM ANALOG & VOID AUDIO", "club_url": "https://entershibuya.com/", "title": "Kacha Kacha vol.4 (supported by HABUSH)", "date": "2026.10.23 (FRI) 22:00〜05:00", "artists": "CYBERHACKSYSTEM, ShioriyBradshaw, TIGHT, MoEPiKA, XUNA, YESBØWY", "genre": "Electro / Industrial Techno / Bass / Broken Beats", "fee": "DOOR: ¥2,000", "flyer": "https://imgproxy.ra.co/_/quality:66/aHR0cHM6Ly9pbWFnZXMucmEuY28vOTM4MzAwNzdiNDhiMzUwM2FjZDYzNjNlM2VjYjMxYjM5NDE3YzQ4NS5qcGc=", "backup_flyer": "https://entershibuya.com/wp/wp-content/uploads/2024/06/club_circuit_2024-694x981.jpg", "is_past": false, "source_url": "https://entershibuya.com/schedule/kacha-kacha-4/"}, {"id": "enter_shibuya-1024", "club_id": "enter_shibuya", "club_name": "ENTER", "area": "渋谷", "station": "渋谷駅 徒歩3分 (宮下パーク至近)", "address": "東京都渋谷区神宮前6-19-17 GEMS神宮前 B1F", "sound": "CUSTOM ANALOG & VOID AUDIO", "club_url": "https://entershibuya.com/", "title": "The Dreamers EP40", "date": "2026.10.24 (SAT) 22:00〜09:00", "artists": "ALEXANDER M, CAPTAIN 25, HannaH, Haruto, Louis Shannon, Ren Yokoi", "genre": "House / Deep House / Dance Music Session", "fee": "DOOR: ¥2,000 / MORNING: ¥1,500", "flyer": "https://imgproxy.ra.co/_/quality:66/aHR0cHM6Ly9pbWFnZXMucmEuY28vZTVjMmFjOTQ3YzNjNTBjOWZmZjZhNzBmYmMzZDg4YTFiZmQ0ZTcwYi5wbmc=", "backup_flyer": "https://entershibuya.com/wp/wp-content/uploads/2022/12/ALEXANDER_M_2026_800.jpg", "is_past": false, "source_url": "https://entershibuya.com/schedule/the-dreamers-43/"}, {"id": "enter_shibuya-1030", "club_id": "enter_shibuya", "club_name": "ENTER", "area": "渋谷", "station": "渋谷駅 徒歩3分 (宮下パーク至近)", "address": "東京都渋谷区神宮前6-19-17 GEMS神宮前 B1F", "sound": "CUSTOM ANALOG & VOID AUDIO", "club_url": "https://entershibuya.com/", "title": "Gluto (新生Gluto Rec. 初ENTER登場)", "date": "2026.10.30 (FRI) 22:00〜05:00", "artists": "DJ KENSEI, Herbalistek, comm, Eichi Abe, OKBOY & DOGWOODS, MANATHOL, D.D., CHAOS, jumbo muramatsu, arata yamamoto, Nobou", "genre": "IDM / Abstract Techno / Bass / Leftfield", "fee": "DOOR: ¥2,000 / After Hours: ¥1,500", "flyer": "https://entershibuya.com/wp/wp-content/uploads/2026/09/gluto_800.png", "backup_flyer": "https://imgproxy.ra.co/_/quality:66/aHR0cHM6Ly9pbWFnZXMucmEuY28vZGMxMTU0MDFmYjJmNmU1YjRkMzM3MmNjN2Q0Y2U2MzM5OGEyMjRkMC5wbmc=", "is_past": false, "source_url": "https://entershibuya.com/schedule/gluto/"}, {"id": "enter_shibuya-1031", "club_id": "enter_shibuya", "club_name": "ENTER", "area": "渋谷", "station": "渋谷駅 徒歩3分 (宮下パーク至近)", "address": "東京都渋谷区神宮前6-19-17 GEMS神宮前 B1F", "sound": "CUSTOM ANALOG & VOID AUDIO", "club_url": "https://entershibuya.com/", "title": "UTAGE – うたげ – HALLOWEEN SPECIAL", "date": "2026.10.31 (SAT) 22:00〜05:00", "artists": "nasthug, YUKIBEB, RUI HAYAKAWA, FELINE, SAMO, and more", "genre": "Hip Hop / House / Baile Funk / Halloween Special", "fee": "DOOR: ¥2,500 / 仮装特典有", "flyer": "https://imgproxy.ra.co/_/quality:66/aHR0cHM6Ly9pbWFnZXMucmEuY28vYTYwODA1NTA0YjQ4ZmY1OTgxYjAzMDgzZGRkMGQ1MGEyNThlYTgxYy5qcGc=", "backup_flyer": "https://img.djeventsearch.com/flyers/xhf_2110339979335606579-1-185fb89f.webp", "is_past": false, "source_url": "https://entershibuya.com/schedule/utage-9/"}, {"id": "mitsuki-1022", "club_id": "mitsuki", "club_name": "翠月 (MITSUKI)", "area": "渋谷", "station": "渋谷駅 徒歩6分 / 道玄坂上", "address": "東京都渋谷区道玄坂1-22-12 長島ビル B1F", "sound": "Vintage JBL 4344 & McIntosh System", "club_url": "https://mitsuki-tokyo.com/", "title": "Expresseur 3rd Anniversary", "date": "2026.10.22 (THU) 22:00〜04:30", "artists": "DJs: Mustache X, KON (Timothy Really), KAZUYA (HOME CENTER), Haruto (Expresseur) / LIVE: YASUHARU MOTOMIYA", "genre": "House / Minimal / Live Electronic", "fee": "DOOR: ¥2,000", "flyer": "https://mitsuki-tokyo.com/wp/wp-content/uploads/2026/10/IMG_0793.jpeg", "backup_flyer": "https://static.ra.co/images/clubs/mitsuki.jpg?dateUpdated=1702461765003", "is_past": true, "source_url": "https://mitsuki-tokyo.com/2026/10/13/20261022/"}, {"id": "mitsuki-1023", "club_id": "mitsuki", "club_name": "翠月 (MITSUKI)", "area": "渋谷", "station": "渋谷駅 徒歩6分 / 道玄坂上", "address": "東京都渋谷区道玄坂1-22-12 長島ビル B1F", "sound": "Vintage JBL 4344 & McIntosh System", "club_url": "https://mitsuki-tokyo.com/", "title": "エイリアン・セックス・フレンズ (ALIEN SEX FRIENDS)", "date": "2026.10.23 (FRI) 23:00〜04:30", "artists": "ZUNDOKODISCO, P-YAN, RYOKEI", "genre": "Disco / House / Leftfield", "fee": "DOOR: ¥3,000 (U23: ¥2,000)", "flyer": "https://mitsuki-tokyo.com/wp/wp-content/uploads/2026/10/IMG_0794.jpeg", "backup_flyer": "https://static.ra.co/images/clubs/mitsuki.jpg?dateUpdated=1702461765003", "is_past": false, "source_url": "https://mitsuki-tokyo.com/2026/10/13/20261023/"}, {"id": "mitsuki-1024", "club_id": "mitsuki", "club_name": "翠月 (MITSUKI)", "area": "渋谷", "station": "渋谷駅 徒歩6分 / 道玄坂上", "address": "東京都渋谷区道玄坂1-22-12 長島ビル B1F", "sound": "Vintage JBL 4344 & McIntosh System", "club_url": "https://mitsuki-tokyo.com/", "title": "BAR TEMP. TAKE OVER", "date": "2026.10.24 (SAT) 22:00〜04:30", "artists": "Sarayu & Wada Yosuke, Jirus, Kova O'Sarin, LEVOLANT", "genre": "House / Techno / Minimal", "fee": "DOOR: ¥2,000", "flyer": "https://mitsuki-tokyo.com/wp/wp-content/uploads/2026/10/IMG_0798.jpeg", "backup_flyer": "https://static.ra.co/images/clubs/mitsuki.jpg?dateUpdated=1702461765003", "is_past": false, "source_url": "https://mitsuki-tokyo.com/2026/10/13/20261024/"}, {"id": "mitsuki-1025", "club_id": "mitsuki", "club_name": "翠月 (MITSUKI)", "area": "渋谷", "station": "渋谷駅 徒歩6分 / 道玄坂上", "address": "東京都渋谷区道玄坂1-22-12 長島ビル B1F", "sound": "Vintage JBL 4344 & McIntosh System", "club_url": "https://mitsuki-tokyo.com/", "title": "MITSUKI SUNDAY (DJ Healthy b2b Hue Ray)", "date": "2026.10.25 (SUN) 22:00〜04:30", "artists": "DJ Healthy b2b Hue Ray, Joni DJ, YELLOWUHURU", "genre": "House / Balearic / Ambient", "fee": "DOOR: ¥1,500", "flyer": "https://mitsuki-tokyo.com/wp/wp-content/uploads/2026/10/IMG_0888.jpeg", "backup_flyer": "https://static.ra.co/images/clubs/mitsuki.jpg?dateUpdated=1702461765003", "is_past": false, "source_url": "https://mitsuki-tokyo.com/2026/10/21/20261025/"}, {"id": "mitsuki-1027", "club_id": "mitsuki", "club_name": "翠月 (MITSUKI)", "area": "渋谷", "station": "渋谷駅 徒歩6分 / 道玄坂上", "address": "東京都渋谷区道玄坂1-22-12 長島ビル B1F", "sound": "Vintage JBL 4344 & McIntosh System", "club_url": "https://mitsuki-tokyo.com/", "title": "MITSUKI TUESDAY (SAMO, r1ku, YAMARCHY)", "date": "2026.10.27 (TUE) 22:00〜04:30", "artists": "SAMO, r1ku, YAMARCHY", "genre": "House / Techno / Leftfield", "fee": "DOOR: ¥1,500", "flyer": "https://mitsuki-tokyo.com/wp/wp-content/uploads/2026/10/IMG_0889.jpeg", "backup_flyer": "https://static.ra.co/images/clubs/mitsuki.jpg?dateUpdated=1702461765003", "is_past": false, "source_url": "https://mitsuki-tokyo.com/2026/10/21/20261027/"}, {"id": "clv-1030", "club_id": "celavi", "club_name": "CÉ LA VI TOKYO", "area": "渋谷", "station": "渋谷駅 直結 (渋谷フクラス)", "address": "東京都渋谷区道玄坂1-2-3 17F・18F", "sound": "d&b audiotechnik ＆ クラブラウンジ特設DJサウンドシステム（17F The Club Lounge）", "club_url": "https://jp.celavi.com/ja-jp/club", "title": "Yelloween | Special Guest DJ: Cheat Codes", "date": "2026.10.30 (FRI) 22:00〜04:30", "artists": "Cheat Codes (LA発メガプロデューサー・トリオ), Veuve Clicquot Official, CÉ LA VI ALL STARS", "genre": "Yelloween Special / Pop Dance / EDM / All Mix", "fee": "Men: ¥6,000(1D) / Women: ¥3,500(1D) / 仮装特典あり", "flyer": "https://nlt-image-cache.aplussquared.workers.dev/storage/v1/object/public/event-images/events/be5bd5a9-acf4-4921-84b0-c9018fd7095b/flyer.jpg", "backup_flyer": "https://cdn.prod.website-files.com/69c17b5b527a07e5bff3b18c/6abb71b9e5edb3106cee7168_clv_tokyo_halloween_groupshot.jpg", "is_past": false, "source_url": "https://jp.celavi.com/ja-jp/club"}, {"id": "vent-1023", "club_id": "vent", "club_name": "VENT", "area": "原宿・表参道", "station": "表参道駅 徒歩1分", "address": "東京都港区南青山3-18-19 B1F", "sound": "世界初SRアルミハニカム平面駆動ユニットスピーカー ＆ ルームアコースティック調音パネル（ROOM1 / ROOM2 2フロア構成）", "club_url": "http://vent-tokyo.net/", "title": "ERIC DUNCAN / DISKO KLUBB", "date": "2026.10.23 (FRI) 23:00〜04:30", "artists": "GUEST: Eric Duncan (Rub-N-Tug / NY), MONKEY TIMERS, YOSHIHAARAA / ROOM2: RAMI, Haruto, mitoChang, Senma", "genre": "Balearic / Disco Dub / House / Techno", "fee": "DOOR: ¥4,000 / ADV: ¥2,500 / BEFORE 0AM: ¥2,000", "flyer": "https://nightlifetokyo.com/_next/image?url=https%3A%2F%2Fnlt-image-cache.aplussquared.workers.dev%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fevent-images%2Fevents%2Ffec654b6-7aea-4abe-90cb-8e271995d82c%2Fra_flyer.png&w=1920&q=75", "backup_flyer": "http://vent-tokyo.net/wp/wp-content/themes/vent/common/img/mainVisual02_pc.jpg", "is_past": false, "source_url": "http://vent-tokyo.net/schedule/"}, {"id": "vent-1024", "club_id": "vent", "club_name": "VENT", "area": "原宿・表参道", "station": "表参道駅 徒歩1分", "address": "東京都港区南青山3-18-19 B1F", "sound": "世界初SRアルミハニカム平面駆動ユニットスピーカー ＆ ルームアコースティック調音パネル（ROOM1 / ROOM2 2フロア構成）", "club_url": "http://vent-tokyo.net/", "title": "XDB / PACIFIC MODE x Solstice", "date": "2026.10.24 (SAT) 23:00〜04:30", "artists": "XDB (Metrolux / Sistrum), PACIFIC MODE & Solstice CREW", "genre": "Deep House / Techno / Ambient Techno", "fee": "DOOR: ¥4,000 / ADV: ¥2,500 / BEFORE 0AM: ¥2,000", "flyer": "https://nightlifetokyo.com/_next/image?url=https%3A%2F%2Fnlt-image-cache.aplussquared.workers.dev%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fevent-images%2Fevents%2F46a97675-632b-4320-b7d1-6dcc7d30affc%2Fra_flyer.png&w=1920&q=75", "backup_flyer": "http://vent-tokyo.net/wp/wp-content/themes/vent/common/img/mainVisual02_pc.jpg", "is_past": false, "source_url": "http://vent-tokyo.net/schedule/"}, {"id": "vent-1030", "club_id": "vent", "club_name": "VENT", "area": "原宿・表参道", "station": "表参道駅 徒歩1分", "address": "東京都港区南青山3-18-19 B1F", "sound": "世界初SRアルミハニカム平面駆動ユニットスピーカー ＆ ルームアコースティック調音パネル（ROOM1 / ROOM2 2フロア構成）", "club_url": "http://vent-tokyo.net/", "title": "CLAUDIO PRC at VENT (Deep Techno Master)", "date": "2026.10.30 (FRI) 23:00〜04:30", "artists": "Claudio PRC (012 / The Gods Planet / Sardinia), VENT TECHNO RESIDENTS", "genre": "Deep Techno / Hypnotic Techno", "fee": "DOOR: ¥4,000 / ADV: ¥2,500 / BEFORE 0AM: ¥2,000", "flyer": "https://nightlifetokyo.com/_next/image?url=https%3A%2F%2Fnlt-image-cache.aplussquared.workers.dev%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fevent-images%2Fevents%2F9a5fa70a-3e20-4c14-b6f3-eac0f7cda345%2Fra_flyer.png&w=1920&q=75", "backup_flyer": "http://vent-tokyo.net/wp/wp-content/themes/vent/common/img/mainVisual02_pc.jpg", "is_past": false, "source_url": "http://vent-tokyo.net/schedule/"}, {"id": "vent-1031", "club_id": "vent", "club_name": "VENT", "area": "原宿・表参道", "station": "表参道駅 徒歩1分", "address": "東京都港区南青山3-18-19 B1F", "sound": "世界初SRアルミハニカム平面駆動ユニットスピーカー ＆ ルームアコースティック調音パネル（ROOM1 / ROOM2 2フロア構成）", "club_url": "http://vent-tokyo.net/", "title": "TAKAAKI ITOH / SHAPE × MIND OFF Halloween", "date": "2026.10.31 (SAT) 23:00〜04:30", "artists": "Takaaki Itoh (Wols), SHAPE & MIND OFF ALL STARS", "genre": "Techno / Industrial Techno / Halloween Special", "fee": "DOOR: ¥4,000 / ADV: ¥2,500 / 仮装割引あり", "flyer": "https://livepocket.jp/public/event_image/filename/355981/9841100a2dac1bf85235781a5c72a683c3c73c42e6e2ac366023f1d59c8a3d19.webp", "backup_flyer": "http://vent-tokyo.net/wp/wp-content/themes/vent/common/img/mainVisual02_pc.jpg", "is_past": false, "source_url": "http://vent-tokyo.net/schedule/"}, {"id": "vent-1106", "club_id": "vent", "club_name": "VENT", "area": "原宿・表参道", "station": "表参道駅 徒歩1分", "address": "東京都港区南青山3-18-19 B1F", "sound": "世界初SRアルミハニカム平面駆動ユニットスピーカー ＆ ルームアコースティック調音パネル（ROOM1 / ROOM2 2フロア構成）", "club_url": "http://vent-tokyo.net/", "title": "LEE BURRIDGE at VENT (All Day I Dream)", "date": "2026.11.06 (FRI) 23:00〜04:30", "artists": "Lee Burridge (All Day I Dream / UK), VENT RESIDENTS", "genre": "Melodic House / Organic House / Deep House", "fee": "DOOR: ¥4,500 / ADV: ¥3,000", "flyer": "https://hfzgjraizxxoxxaupwkq.supabase.co/storage/v1/object/public/events-media/flyers/lee-burridge-vent-2026-11-06/flyer_1.webp", "backup_flyer": "http://vent-tokyo.net/wp/wp-content/themes/vent/common/img/mainVisual02_pc.jpg", "is_past": false, "source_url": "http://vent-tokyo.net/schedule/"}, {"id": "vent-1107", "club_id": "vent", "club_name": "VENT", "area": "原宿・表参道", "station": "表参道駅 徒歩1分", "address": "東京都港区南青山3-18-19 B1F", "sound": "世界初SRアルミハニカム平面駆動ユニットスピーカー ＆ ルームアコースティック調音パネル（ROOM1 / ROOM2 2フロア構成）", "club_url": "http://vent-tokyo.net/", "title": "SANDRIEN / ku-haku at VENT", "date": "2026.11.07 (SAT) 23:00〜04:30", "artists": "Sandrien (De School / Amsterdam), ku-haku Residents", "genre": "Techno / Acid / House", "fee": "DOOR: ¥4,000 / ADV: ¥2,500", "flyer": "https://nightlifetokyo.com/_next/image?url=https%3A%2F%2Fnlt-image-cache.aplussquared.workers.dev%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fevent-images%2Fevents%2F9a5fa70a-3e20-4c14-b6f3-eac0f7cda345%2Fra_flyer.png&w=1920&q=75", "backup_flyer": "http://vent-tokyo.net/wp/wp-content/themes/vent/common/img/mainVisual02_pc.jpg", "is_past": false, "source_url": "http://vent-tokyo.net/schedule/"}, {"id": "vent-1113", "club_id": "vent", "club_name": "VENT", "area": "原宿・表参道", "station": "表参道駅 徒歩1分", "address": "東京都港区南青山3-18-19 B1F", "sound": "世界初SRアルミハニカム平面駆動ユニットスピーカー ＆ ルームアコースティック調音パネル（ROOM1 / ROOM2 2フロア構成）", "club_url": "http://vent-tokyo.net/", "title": "AZU TIWALINE , DJ MARIA. / LDG 10th Anniversary \"EPILOGUE\"", "date": "2026.11.13 (FRI) 23:00〜04:30", "artists": "Azu Tiwaline, DJ MARIA., LDG Residents", "genre": "Bass / Dub Techno / Hypnotic Techno", "fee": "DOOR: ¥4,000 / ADV: ¥2,500", "flyer": "https://nightlifetokyo.com/_next/image?url=https%3A%2F%2Fnlt-image-cache.aplussquared.workers.dev%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fevent-images%2Fevents%2Ffec654b6-7aea-4abe-90cb-8e271995d82c%2Fra_flyer.png&w=1920&q=75", "backup_flyer": "http://vent-tokyo.net/wp/wp-content/themes/vent/common/img/mainVisual02_pc.jpg", "is_past": false, "source_url": "http://vent-tokyo.net/schedule/"}, {"id": "vent-1121", "club_id": "vent", "club_name": "VENT", "area": "原宿・表参道", "station": "表参道駅 徒歩1分", "address": "東京都港区南青山3-18-19 B1F", "sound": "世界初SRアルミハニカム平面駆動ユニットスピーカー ＆ ルームアコースティック調音パネル（ROOM1 / ROOM2 2フロア構成）", "club_url": "http://vent-tokyo.net/", "title": "PHILIPPA PACHO / VELTRAUM at VENT", "date": "2026.11.21 (SAT) 23:00〜04:30", "artists": "Philippa Pacho (Berghain / Stockholm), VELTRAUM Residents", "genre": "Techno / Groovy Techno", "fee": "DOOR: ¥4,000 / ADV: ¥2,500", "flyer": "https://nightlifetokyo.com/_next/image?url=https%3A%2F%2Fnlt-image-cache.aplussquared.workers.dev%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fevent-images%2Fevents%2F46a97675-632b-4320-b7d1-6dcc7d30affc%2Fra_flyer.png&w=1920&q=75", "backup_flyer": "http://vent-tokyo.net/wp/wp-content/themes/vent/common/img/mainVisual02_pc.jpg", "is_past": false, "source_url": "http://vent-tokyo.net/schedule/"}, {"id": "zt-1022", "club_id": "zerotokyo", "club_name": "ZEROTOKYO", "area": "新宿", "station": "西武新宿駅 徒歩1分 / 新宿駅 徒歩7分", "address": "東京都新宿区歌舞伎町1-29-1 東急歌舞伎町タワー B1-B4", "sound": "B4 Z HALL / B4 ENTER / B3 RING / B2 BOX / B2 R BAR / B1 TERRACE（国内最大級エンタメコンプレックス）", "club_url": "https://zerotokyo.jp/", "title": "COINCIDENCE – 1st Anniversary-", "date": "2026.10.22 (THU) 23:00〜04:30", "artists": "GUEST DJ: YUTARO / DJ: SHUN-SHUN, NOGU, MOTOMICHI, JET, PELOLLY, Kenskzm, DADO, etomo", "genre": "ALL MIX / HOUSE / TECHNO / HIPHOP", "fee": "DOOR: ¥2,500(1D) / ADV: ¥2,000(1D)", "flyer": "https://zerotokyo.jp/wp/wp-content/uploads/2025/08/COINCIDENCE_logo.png", "backup_flyer": "https://zerotokyo.jp/wp/wp-content/themes/zerotokyo/assets/images/page/common/nav_home.webp", "is_past": true, "source_url": "https://zerotokyo.jp/event/coincidence-1022/"}, {"id": "zt-1025", "club_id": "zerotokyo", "club_name": "ZEROTOKYO", "area": "新宿", "station": "西武新宿駅 徒歩1分 / 新宿駅 徒歩7分", "address": "東京都新宿区歌舞伎町1-29-1 東急歌舞伎町タワー B1-B4", "sound": "B4 Z HALL / B4 ENTER / B3 RING / B2 BOX / B2 R BAR / B1 TERRACE（国内最大級エンタメコンプレックス）", "club_url": "https://zerotokyo.jp/", "title": "FURRYRAVE Vol.3 & FORCE FESTIVAL AFTER PARTY", "date": "2026.10.25 (SUN) 23:00〜04:30", "artists": "FURRYRAVE ALL STARS & FORCE FESTIVAL SPECIAL GUESTS (-MAGIC CITY TOKYO-)", "genre": "BASS / HOUSE / TECHNO / HIPHOP", "fee": "DOOR: ¥3,500 / ADV: ¥2,500", "flyer": "https://zerotokyo.jp/wp/wp-content/uploads/2026/08/S__79691845.jpg", "backup_flyer": "https://zerotokyo.jp/wp/wp-content/uploads/2026/09/S__80961576.jpg", "is_past": false, "source_url": "https://zerotokyo.jp/event/furryrave-1025/"}, {"id": "zt-1030", "club_id": "zerotokyo", "club_name": "ZEROTOKYO", "area": "新宿", "station": "西武新宿駅 徒歩1分 / 新宿駅 徒歩7分", "address": "東京都新宿区歌舞伎町1-29-1 東急歌舞伎町タワー B1-B4", "sound": "B4 Z HALL / B4 ENTER / B3 RING / B2 BOX / B2 R BAR / B1 TERRACE（国内最大級エンタメコンプレックス）", "club_url": "https://zerotokyo.jp/", "title": "ZEROTOKYO HALLOWEEN DAY1 “CRAZY PARTY NIGHT feat. きゃりーぱみゅぱみゅ”", "date": "2026.10.30 (FRI) 23:00〜04:30", "artists": "SPECIAL GUEST: きゃりーぱみゅぱみゅ, ZEROTOKYO RESIDENTS & DANCERS (Supported by Veuve Clicquot Yelloween)", "genre": "HALLOWEEN ALL MIX / POP / J-CULTURE", "fee": "DOOR: ¥5,000 / ADV: ¥4,000 / 全身仮装割引あり", "flyer": "https://zerotokyo.jp/wp/wp-content/uploads/2026/06/S__80961541.jpg", "backup_flyer": "https://zerotokyo.jp/wp/wp-content/themes/zerotokyo/assets/images/page/common/nav_home.webp", "is_past": false, "source_url": "https://zerotokyo.jp/event/zerotokyo-halloween-day1-1030/"}, {"id": "zt-1031", "club_id": "zerotokyo", "club_name": "ZEROTOKYO", "area": "新宿", "station": "西武新宿駅 徒歩1分 / 新宿駅 徒歩7分", "address": "東京都新宿区歌舞伎町1-29-1 東急歌舞伎町タワー B1-B4", "sound": "B4 Z HALL / B4 ENTER / B3 RING / B2 BOX / B2 R BAR / B1 TERRACE（国内最大級エンタメコンプレックス）", "club_url": "https://zerotokyo.jp/", "title": "ZEROTOKYO HALLOWEEN DAY2 “NEON STARS Supported by Veuve Clicquot Yelloween”", "date": "2026.10.31 (SAT) 22:00〜04:30", "artists": "2Wasted, HEAVEN'S GATE CREW, ShioriyBradshaw, SID3 EFFECT (HARD TECHNO SET), VIVID, POLE DANCERS, CYBERJAPAN DANCERS", "genre": "HALLOWEEN / TECHNO / BASS MUSIC / HOUSE", "fee": "DOOR: ¥5,500 / ADV: ¥4,500 / 全身仮装: ¥3,000 (3:00以降割引あり)", "flyer": "https://zerotokyo.jp/wp/wp-content/uploads/2026/09/S__80961576.jpg", "backup_flyer": "https://zerotokyo.jp/wp/wp-content/uploads/2026/06/S__80961541.jpg", "is_past": false, "source_url": "https://zerotokyo.jp/event/zerotokyo-halloween-day2-20261031/"}, {"id": "zt-1102", "club_id": "zerotokyo", "club_name": "ZEROTOKYO", "area": "新宿", "station": "西武新宿駅 徒歩1分 / 新宿駅 徒歩7分", "address": "東京都新宿区歌舞伎町1-29-1 東急歌舞伎町タワー B1-B4", "sound": "B4 Z HALL / B4 ENTER / B3 RING / B2 BOX / B2 R BAR / B1 TERRACE（国内最大級エンタメコンプレックス）", "club_url": "https://zerotokyo.jp/", "title": "BRESH TOKYO 02/11 – Halloween Special Edition", "date": "2026.11.02 (MON) 23:00〜04:30", "artists": "BRESH WORLD TOUR DJS & ENTERTAINERS", "genre": "LATIN / REGGAETON / POP / HIP HOP / EDM", "fee": "DOOR: ¥4,500 / ADV: ¥3,500", "flyer": "https://zerotokyo.jp/wp/wp-content/uploads/2026/09/1080x1080.png", "backup_flyer": "https://zerotokyo.jp/wp/wp-content/themes/zerotokyo/assets/images/page/common/nav_home.webp", "is_past": false, "source_url": "https://zerotokyo.jp/event/bresh-1102/"}, {"id": "zt-1218", "club_id": "zerotokyo", "club_name": "ZEROTOKYO", "area": "新宿", "station": "西武新宿駅 徒歩1分 / 新宿駅 徒歩7分", "address": "東京都新宿区歌舞伎町1-29-1 東急歌舞伎町タワー B1-B4", "sound": "B4 Z HALL / B4 ENTER / B3 RING / B2 BOX / B2 R BAR / B1 TERRACE（国内最大級エンタメコンプレックス）", "club_url": "https://zerotokyo.jp/", "title": "THE ONE Presents Steve Angello (Swedish House Mafia)", "date": "2026.12.18 (FRI) 23:00〜04:30", "artists": "SPECIAL GUEST: Steve Angello (Swedish House Mafia / Size Records), SUPPORT: ZEROTOKYO ALL STARS", "genre": "PROGRESSIVE HOUSE / HOUSE / EDM (8年ぶり単独来日公演)", "fee": "DOOR: ¥6,500 / ADV: ¥5,500 / UNDER25: ¥4,000", "flyer": "https://zerotokyo.jp/wp/wp-content/uploads/2026/07/261218_THEONE_Steve-Angello_Square.png", "backup_flyer": "https://zerotokyo.jp/wp/wp-content/themes/zerotokyo/assets/images/page/common/nav_home.webp", "is_past": false, "source_url": "https://zerotokyo.jp/event/the-one-1218/"}, {"id": "warp-1022", "club_id": "warp", "club_name": "WARP SHINJUKU", "area": "新宿", "station": "西武新宿駅 徒歩3分 / 新宿駅 徒歩5分", "address": "東京都新宿区歌舞伎町1-21-1 第二東亜会館 B1F/B2F", "sound": "d&b audiotechnik ＆ 超高解像度LEDパネル（UNIVERSE / METEO / FORCE / COSMO 全4フロア構成）", "club_url": "https://warp-shinjuku.jp/", "title": "WARP THURSDAY - Rush & ENVY (4th Week)", "date": "2026.10.22 (THU) 21:00〜04:30", "artists": "WARP RESIDENTS", "genre": "All Mix / Open Format / J-RAP", "fee": "Men: ¥2,500(2D) / Women: ¥1,000(2D)", "flyer": "https://warp-shinjuku.jp/wp-content/uploads/2018/08/ogp_img_01.jpg", "backup_flyer": "https://warp-shinjuku.jp/wp-content/uploads/2018/12/warp_logo_color_min.png", "is_past": true, "source_url": "https://warp-shinjuku.jp/event/"}, {"id": "warp-1023", "club_id": "warp", "club_name": "WARP SHINJUKU", "area": "新宿", "station": "西武新宿駅 徒歩3分 / 新宿駅 徒歩5分", "address": "東京都新宿区歌舞伎町1-21-1 第二東亜会館 B1F/B2F", "sound": "d&b audiotechnik ＆ 超高解像度LEDパネル（UNIVERSE / METEO / FORCE / COSMO 全4フロア構成）", "club_url": "https://warp-shinjuku.jp/", "title": "WARP HALLOWEEN NIGHT -NO ESCAPE- Opening feat. iamSHUM", "date": "2026.10.23 (FRI) 21:00〜04:30", "artists": "iamSHUM, WARP ALL STARS, SELENES DANCER", "genre": "Halloween Special / All Mix / EDM / Hip Hop / House", "fee": "仮装特典: 女性入場無料(1D) / 男性割引", "flyer": "https://warp-shinjuku.jp/wp-content/uploads/2024/08/mode_2_202601.jpg", "backup_flyer": "https://warp-shinjuku.jp/wp-content/uploads/2018/10/202409_reboot.jpg", "is_past": false, "source_url": "https://warp-shinjuku.jp/halloween_20261023/"}, {"id": "warp-1024", "club_id": "warp", "club_name": "WARP SHINJUKU", "area": "新宿", "station": "西武新宿駅 徒歩3分 / 新宿駅 徒歩5分", "address": "東京都新宿区歌舞伎町1-21-1 第二東亜会館 B1F/B2F", "sound": "d&b audiotechnik ＆ 超高解像度LEDパネル（UNIVERSE / METEO / FORCE / COSMO 全4フロア構成）", "club_url": "https://warp-shinjuku.jp/", "title": "WARP HALLOWEEN NIGHT feat. RED&WHITE Supported by SMIRNOFF", "date": "2026.10.24 (SAT) 21:00〜04:30", "artists": "TJO, WARP ALL STARS, SELENES DANCER", "genre": "Halloween Special / RED & WHITE / All Mix / EDM", "fee": "仮装特典: 女性入場無料(1D) / 男性割引", "flyer": "https://warp-shinjuku.jp/wp-content/uploads/2024/08/sat_2_202601.jpg", "backup_flyer": "https://admin.club-port.com/shared_img/production/1/197/20200929191341.jpg?20200929191341", "is_past": false, "source_url": "https://warp-shinjuku.jp/halloween_20261023/"}, {"id": "warp-1025", "club_id": "warp", "club_name": "WARP SHINJUKU", "area": "新宿", "station": "西武新宿駅 徒歩3分 / 新宿駅 徒歩5分", "address": "東京都新宿区歌舞伎町1-21-1 第二東亜会館 B1F/B2F", "sound": "d&b audiotechnik ＆ 超高解像度LEDパネル（UNIVERSE / METEO / FORCE / COSMO 全4フロア構成）", "club_url": "https://warp-shinjuku.jp/", "title": "WARP HALLOWEEN SUNDAY - APoLLo & Bore up", "date": "2026.10.25 (SUN) 21:00〜04:30", "artists": "WARP ALL STARS, SELENES DANCER", "genre": "Halloween / All Mix / Hip Hop / K-POP", "fee": "仮装特典: 女性入場無料(1D) / 男性割引", "flyer": "https://warp-shinjuku.jp/wp-content/uploads/2025/08/apollo_202601.jpg", "backup_flyer": "https://warp-shinjuku.jp/wp-content/uploads/2018/12/warp_logo_color_min.png", "is_past": false, "source_url": "https://warp-shinjuku.jp/halloween_20261023/"}, {"id": "warp-1026", "club_id": "warp", "club_name": "WARP SHINJUKU", "area": "新宿", "station": "西武新宿駅 徒歩3分 / 新宿駅 徒歩5分", "address": "東京都新宿区歌舞伎町1-21-1 第二東亜会館 B1F/B2F", "sound": "d&b audiotechnik ＆ 超高解像度LEDパネル（UNIVERSE / METEO / FORCE / COSMO 全4フロア構成）", "club_url": "https://warp-shinjuku.jp/", "title": "WARP HALLOWEEN MONDAY feat. GUEST: DJ JOJO", "date": "2026.10.26 (MON) 21:00〜04:30", "artists": "DJ JOJO, WARP RESIDENTS, MC BULL", "genre": "Halloween / All Mix / Open Format / Hip Hop", "fee": "仮装特典: 女性入場無料(1D) / 男性割引", "flyer": "https://warp-shinjuku.jp/wp-content/uploads/2024/08/emot_202601.jpg", "backup_flyer": "https://warp-shinjuku.jp/wp-content/uploads/2018/12/warp_logo_color_min.png", "is_past": false, "source_url": "https://warp-shinjuku.jp/djjojo_20260927/"}, {"id": "warp-1027", "club_id": "warp", "club_name": "WARP SHINJUKU", "area": "新宿", "station": "西武新宿駅 徒歩3分 / 新宿駅 徒歩5分", "address": "東京都新宿区歌舞伎町1-21-1 第二東亜会館 B1F/B2F", "sound": "d&b audiotechnik ＆ 超高解像度LEDパネル（UNIVERSE / METEO / FORCE / COSMO 全4フロア構成）", "club_url": "https://warp-shinjuku.jp/", "title": "WARP HALLOWEEN TUESDAY feat. GUEST: DJ PEACH", "date": "2026.10.27 (TUE) 21:00〜04:30", "artists": "DJ PEACH, 22, ANLI, ASTERA, JUNO, MC J-STEW", "genre": "Halloween / All Mix / Open Format / Hardstyle", "fee": "仮装特典: 女性入場無料(1D) / 男性割引", "flyer": "https://warp-shinjuku.jp/wp-content/uploads/2024/08/goon_202601.jpg", "backup_flyer": "https://warp-shinjuku.jp/wp-content/uploads/2018/12/warp_logo_color_min.png", "is_past": false, "source_url": "https://warp-shinjuku.jp/event/"}, {"id": "warp-1028", "club_id": "warp", "club_name": "WARP SHINJUKU", "area": "新宿", "station": "西武新宿駅 徒歩3分 / 新宿駅 徒歩5分", "address": "東京都新宿区歌舞伎町1-21-1 第二東亜会館 B1F/B2F", "sound": "d&b audiotechnik ＆ 超高解像度LEDパネル（UNIVERSE / METEO / FORCE / COSMO 全4フロア構成）", "club_url": "https://warp-shinjuku.jp/", "title": "WARP HALLOWEEN WEDNESDAY - Atlantis & INFLUENCE", "date": "2026.10.28 (WED) 21:00〜04:30", "artists": "WARP ALL STARS, SELENES DANCER", "genre": "Halloween / All Mix / Hip Hop / K-POP", "fee": "仮装特典: 女性入場無料(1D) / 男性割引", "flyer": "https://warp-shinjuku.jp/wp-content/uploads/2018/08/warp_logo_500.png", "backup_flyer": "https://warp-shinjuku.jp/wp-content/uploads/2018/12/warp_logo_color_min.png", "is_past": false, "source_url": "https://warp-shinjuku.jp/event/"}, {"id": "warp-1029", "club_id": "warp", "club_name": "WARP SHINJUKU", "area": "新宿", "station": "西武新宿駅 徒歩3分 / 新宿駅 徒歩5分", "address": "東京都新宿区歌舞伎町1-21-1 第二東亜会館 B1F/B2F", "sound": "d&b audiotechnik ＆ 超高解像度LEDパネル（UNIVERSE / METEO / FORCE / COSMO 全4フロア構成）", "club_url": "https://warp-shinjuku.jp/", "title": "WARP HALLOWEEN THURSDAY - Rush & ENVY", "date": "2026.10.29 (THU) 21:00〜04:30", "artists": "WARP RESIDENTS", "genre": "Halloween / All Mix / Open Format / J-POP", "fee": "仮装特典: 女性入場無料(1D) / 男性割引", "flyer": "https://warp-shinjuku.jp/wp-content/uploads/2018/08/ogp_img_01.jpg", "backup_flyer": "https://warp-shinjuku.jp/wp-content/uploads/2018/12/warp_logo_color_min.png", "is_past": false, "source_url": "https://warp-shinjuku.jp/event/"}, {"id": "warp-1030", "club_id": "warp", "club_name": "WARP SHINJUKU", "area": "新宿", "station": "西武新宿駅 徒歩3分 / 新宿駅 徒歩5分", "address": "東京都新宿区歌舞伎町1-21-1 第二東亜会館 B1F/B2F", "sound": "d&b audiotechnik ＆ 超高解像度LEDパネル（UNIVERSE / METEO / FORCE / COSMO 全4フロア構成）", "club_url": "https://warp-shinjuku.jp/", "title": "WARP HALLOWEEN SPECIAL - MODE & SOUBY", "date": "2026.10.30 (FRI) 21:00〜04:30", "artists": "AOI, Comb, Louis, Shinya, WARP ALL STARS", "genre": "Halloween EDM / House / Trance / Hip Hop", "fee": "仮装特典: 女性入場無料(1D) / 男性割引", "flyer": "https://warp-shinjuku.jp/wp-content/uploads/2024/08/mode_2_202601.jpg", "backup_flyer": "https://warp-shinjuku.jp/wp-content/uploads/2018/10/202409_reboot.jpg", "is_past": false, "source_url": "https://warp-shinjuku.jp/halloween_20261023/"}, {"id": "warp-1031", "club_id": "warp", "club_name": "WARP SHINJUKU", "area": "新宿", "station": "西武新宿駅 徒歩3分 / 新宿駅 徒歩5分", "address": "東京都新宿区歌舞伎町1-21-1 第二東亜会館 B1F/B2F", "sound": "d&b audiotechnik ＆ 超高解像度LEDパネル（UNIVERSE / METEO / FORCE / COSMO 全4フロア構成）", "club_url": "https://warp-shinjuku.jp/", "title": "WARP SHINJUKU HALLOWEEN 2026 (GRAND CLIMAX)", "date": "2026.10.31 (SAT) 20:00〜04:30", "artists": "WARP ALL STARS & HALLOWEEN DANCERS & SPECIAL GUESTS", "genre": "Halloween Grand Climax / All Mix / EDM / Hip Hop", "fee": "仮装特典: 女性入場無料(1D) / 男性割引", "flyer": "https://warp-shinjuku.jp/wp-content/uploads/2024/08/sat_2_202601.jpg", "backup_flyer": "https://admin.club-port.com/shared_img/production/1/197/20200929191341.jpg?20200929191341", "is_past": false, "source_url": "https://warp-shinjuku.jp/halloween_20261023/"}, {"id": "warp-1114", "club_id": "warp", "club_name": "WARP SHINJUKU", "area": "新宿", "station": "西武新宿駅 徒歩3分 / 新宿駅 徒歩5分", "address": "東京都新宿区歌舞伎町1-21-1 第二東亜会館 B1F/B2F", "sound": "d&b audiotechnik ＆ 超高解像度LEDパネル（UNIVERSE / METEO / FORCE / COSMO 全4フロア構成）", "club_url": "https://warp-shinjuku.jp/", "title": "AVA NIGHT TOKYO 2026", "date": "2026.11.14 (SAT) 21:00〜04:30", "artists": "AVA NIGHT HEADLINERS & WARP ALL STARS", "genre": "EDM / Festival Sound / All Mix", "fee": "Men: ¥4,500(1D) / Women: ¥1,500(1D)", "flyer": "https://images.iflyer.tv/bw_1920/bh_1080/pf_1/1_40phncbwd9y7o4o06aqla.jpg", "backup_flyer": "https://warp-shinjuku.jp/wp-content/uploads/2018/12/warp_logo_color_min.png", "is_past": false, "source_url": "https://iflyer.tv/en/WarpShinjuku/"}];
+    let currentScope = 'PAST_ARCHIVE'; // 'PAST_ARCHIVE', 'NOW_SHOWING', 'ALL'
+    let currentArea = 'ALL';
+    let searchQuery = '';
+    let soundEnabled = false;
+    let boothCurrentIndex = 0;
+    let audioCtx = null;
+
+    // Web Audio Synthesizer for Cinema FX
+    function playCinemaSound(freq, type, duration) {
+      if (!soundEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type || 'sine';
+        osc.frequency.setValueAtTime(freq || 220, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + (duration || 0.15));
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + (duration || 0.15));
+      } catch (e) {}
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      const icon = document.getElementById('soundIcon');
+      const btn = document.getElementById('soundBtn');
+      if (soundEnabled) {
+        icon.innerText = '🔊';
+        btn.classList.add('border-amber-500/80', 'text-amber-300');
+        playCinemaSound(440, 'triangle', 0.2);
+      } else {
+        icon.innerText = '🔇';
+        btn.classList.remove('border-amber-500/80', 'text-amber-300');
+      }
+    }
+
+    // Filtering Engine
+    function getFilteredEvents() {
+      return eventsData.filter(ev => {
+        if (currentScope === 'PAST_ARCHIVE' && !ev.is_past) return false;
+        if (currentScope === 'NOW_SHOWING' && ev.is_past) return false;
+        if (currentArea !== 'ALL' && ev.area !== currentArea) return false;
+        if (searchQuery) {
+          const hay = (ev.title + ' ' + ev.artists + ' ' + ev.club_name + ' ' + ev.genre + ' ' + ev.area).toLowerCase();
+          if (!hay.includes(searchQuery)) return false;
+        }
+        return true;
+      });
+    }
+
+    function setScope(scope) {
+      currentScope = scope;
+      playCinemaSound(330, 'sine', 0.12);
+      updateScopeButtons();
+      renderGallery();
+    }
+
+    function setArea(area) {
+      currentArea = area;
+      playCinemaSound(280, 'sine', 0.1);
+      updateAreaButtons();
+      renderGallery();
+    }
+
+    function handleSearch(val) {
+      searchQuery = val.trim().toLowerCase();
+      renderGallery();
+    }
+
+    function updateScopeButtons() {
+      const p = document.getElementById('scope-past');
+      const n = document.getElementById('scope-now');
+      const a = document.getElementById('scope-all');
+      
+      p.className = (currentScope === 'PAST_ARCHIVE')
+        ? 'px-4 py-2 rounded-xl badge-gold whitespace-nowrap transition flex items-center gap-1.5 shadow'
+        : 'px-4 py-2 rounded-xl border border-zinc-800 text-zinc-400 hover:text-white font-medium whitespace-nowrap transition flex items-center gap-1.5';
+      n.className = (currentScope === 'NOW_SHOWING')
+        ? 'px-4 py-2 rounded-xl badge-gold whitespace-nowrap transition flex items-center gap-1.5 shadow'
+        : 'px-4 py-2 rounded-xl border border-zinc-800 text-zinc-400 hover:text-white font-medium whitespace-nowrap transition flex items-center gap-1.5';
+      a.className = (currentScope === 'ALL')
+        ? 'px-4 py-2 rounded-xl badge-gold whitespace-nowrap transition flex items-center gap-1.5 shadow'
+        : 'px-4 py-2 rounded-xl border border-zinc-800 text-zinc-400 hover:text-white font-medium whitespace-nowrap transition flex items-center gap-1.5';
+    }
+
+    function updateAreaButtons() {
+      document.querySelectorAll('.area-chip').forEach(b => {
+        b.className = (b.dataset.area === currentArea)
+          ? 'area-chip px-3 py-1.5 rounded-lg bg-zinc-700 text-white font-bold whitespace-nowrap ring-1 ring-amber-400'
+          : 'area-chip px-3 py-1.5 rounded-lg border border-zinc-800 text-zinc-400 hover:text-white whitespace-nowrap';
+      });
+    }
+
+    // Render Poster Gallery Wall
+    function renderGallery() {
+      const filtered = getFilteredEvents();
+      document.getElementById('activeCount').innerText = filtered.length;
+
+      const wall = document.getElementById('posterGalleryWall');
+      if (filtered.length === 0) {
+        wall.innerHTML = `
+          <div class="col-span-full py-20 text-center text-zinc-500 space-y-3">
+            <p class="text-sm font-medium">該当するポスター作品がありません。</p>
+            <button onclick="setScope('ALL'); setArea('ALL')" class="px-4 py-2 rounded-xl border border-zinc-800 text-xs text-zinc-400 hover:text-white">
+              全上映コレクションに戻す
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      wall.innerHTML = filtered.map(ev => {
+        const isPast = ev.is_past;
+        const posterImg = ev.flyer || ev.backup_flyer;
+        const dateParts = ev.date ? ev.date.split(' ') : ['2026.10'];
+        const mainArtists = ev.artists ? ev.artists.split(',').slice(0, 3).join(', ') : 'RESIDENT DJS';
+
+        return `
+          <div class="movie-poster-card ${isPast ? 'past-archive' : ''} cursor-pointer flex flex-col justify-between" 
+               onclick="openCinemaModal('${ev.id}')"
+               title="ポスター詳細・上映仕様を見る">
+            
+            <!-- 2:3 Movie Poster Box -->
+            <div class="poster-aspect">
+              <img src="${posterImg}" alt="${ev.title}" referrerpolicy="no-referrer" loading="lazy" 
+                   class="${isPast ? 'filter contrast-[0.95] brightness-[0.85]' : ''}"
+                   onerror="this.src='${ev.backup_flyer}';">
+              
+              <!-- Film Stamped Ribbon / Badges -->
+              <div class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded text-[9px] font-mono-code font-bold uppercase bg-black/85 text-zinc-200 border border-white/20 shadow">
+                ${ev.area}
+              </div>
+
+              ${isPast ? `
+                <!-- ROADSHOW ARCHIVE STAMP -->
+                <div class="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded text-[9px] font-mono-code font-black bg-amber-500 text-black shadow-lg">
+                  ARCHIVE
+                </div>
+                <div class="absolute bottom-2.5 left-2.5 right-2.5 py-1 px-2 rounded bg-black/80 backdrop-blur-md text-center text-[10px] font-mono-code text-amber-300 border border-amber-500/30">
+                  名作アーカイブ上映済
+                </div>
+              ` : `
+                <div class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded text-[9px] font-mono-code font-bold bg-red-600 text-white shadow">
+                  NOW SHOWING
+                </div>
+              `}
+
+              <!-- Cinema Hover Overlay -->
+              <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent opacity-0 hover:opacity-100 transition-opacity flex flex-col justify-end p-3.5 space-y-1">
+                <span class="text-[10px] font-mono-code text-amber-300 font-bold">🔍 映画館スタイルで鑑賞</span>
+                <span class="text-xs font-bold text-white line-clamp-2">${ev.title}</span>
+                <span class="text-[10px] text-zinc-400 font-mono-code">@ ${ev.club_name}</span>
+              </div>
+            </div>
+
+            <!-- Movie Poster Title & Billing Credits Card Footer -->
+            <div class="p-3.5 space-y-2 bg-[#0d0d12] border-t border-zinc-900">
+              <div class="flex items-center justify-between text-[11px] font-mono-code">
+                <span class="text-zinc-400">${dateParts[0]}</span>
+                <span class="text-zinc-500 font-bold truncate max-w-[90px]">${ev.club_name}</span>
+              </div>
+
+              <h3 class="font-bold text-xs sm:text-sm text-white line-clamp-1 leading-snug">
+                ${ev.title}
+              </h3>
+
+              <!-- Movie Billing Style Credits Block -->
+              <div class="billing-block pt-1 border-t border-zinc-900 truncate">
+                <span class="text-zinc-500">CAST:</span> ${mainArtists}
+              </div>
+
+              <div class="flex items-center justify-between text-[10px] font-mono-code pt-1 text-zinc-400">
+                <span class="px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[9px] uppercase">${ev.genre.split('/')[0]}</span>
+                <span class="text-amber-400 font-semibold">${ev.fee.split('/')[0]}</span>
+              </div>
+            </div>
+
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Open Cinema Screening Modal
+    function openCinemaModal(eventId) {
+      const ev = eventsData.find(e => e.id === eventId);
+      if (!ev) return;
+      playCinemaSound(520, 'sine', 0.18);
+
+      const isPast = ev.is_past;
+      const posterImg = ev.flyer || ev.backup_flyer;
+
+      document.getElementById('cinemaModalContent').innerHTML = `
+        <!-- Left: Full 2:3 Movie Poster Presentation -->
+        <div class="md:w-5/12 bg-black flex items-center justify-center p-6 border-b md:border-b-0 md:border-r border-zinc-800 relative">
+          <div class="w-full max-w-sm aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border border-zinc-800 relative group">
+            <img src="${posterImg}" alt="${ev.title}" referrerpolicy="no-referrer" class="w-full h-full object-cover">
+            
+            <a href="${posterImg}" target="_blank" rel="noopener noreferrer" 
+               class="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-black/80 hover:bg-black text-white text-xs font-mono-code border border-white/20 transition flex items-center gap-1 shadow-lg">
+              <span>↗</span> 原寸画像
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: Movie Details & Credit Roll -->
+        <div class="md:w-7/12 p-6 sm:p-8 space-y-6 flex flex-col justify-between">
+          <div class="space-y-4">
+            
+            <!-- Badges -->
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded text-[10px] font-mono-code font-bold uppercase bg-zinc-800 text-zinc-300">${ev.area}</span>
+              <span class="px-2.5 py-0.5 rounded text-[10px] font-mono-code font-bold uppercase bg-amber-400 text-black">OFFICIAL POSTER</span>
+              ${isPast ? '<span class="px-2.5 py-0.5 rounded text-[10px] font-mono-code font-black bg-red-600 text-white">ARCHIVE 上映終了</span>' : '<span class="px-2.5 py-0.5 rounded text-[10px] font-mono-code font-bold bg-emerald-500 text-black">NOW SHOWING</span>'}
+            </div>
+
+            <!-- Title & Sub -->
+            <div class="space-y-1">
+              <h2 class="text-xl sm:text-2xl font-black text-white leading-tight font-cinema-title">${ev.title}</h2>
+              <p class="text-xs sm:text-sm text-zinc-400">@ ${ev.club_name} (${ev.station})</p>
+            </div>
+
+            <!-- Movie Specs Grid -->
+            <div class="grid grid-cols-2 gap-3 p-4 rounded-2xl bg-zinc-950/80 border border-zinc-800/80 text-xs font-mono-code">
+              <div>
+                <span class="text-zinc-500 block text-[10px]">上映日時 (DATE):</span>
+                <span class="font-bold text-white">${ev.date}</span>
+              </div>
+              <div>
+                <span class="text-zinc-500 block text-[10px]">入場料金 (ADMISSION):</span>
+                <span class="font-bold text-amber-300">${ev.fee}</span>
+              </div>
+              <div>
+                <span class="text-zinc-500 block text-[10px]">音響設計 (SOUND SYSTEM):</span>
+                <span class="text-zinc-300 truncate block">${ev.sound}</span>
+              </div>
+              <div>
+                <span class="text-zinc-500 block text-[10px]">ジャンル (SOUNDTRACK):</span>
+                <span class="text-zinc-300 truncate block">${ev.genre}</span>
+              </div>
+            </div>
+
+            <!-- Starring & Cast Credits -->
+            <div class="space-y-1.5">
+              <h4 class="text-xs font-bold text-zinc-400 font-mono-code uppercase tracking-wider">主演・出演ラインナップ (STARRING &amp; DJS)</h4>
+              <p class="text-xs sm:text-sm text-zinc-200 bg-zinc-900/50 p-3 rounded-xl border border-zinc-800/60 leading-relaxed">
+                ${ev.artists}
+              </p>
+            </div>
+
+            <!-- Venue Location -->
+            <div class="text-[11px] text-zinc-500 font-mono-code">
+              📍 劇場所在地: ${ev.address}
+            </div>
+
+          </div>
+
+          <!-- Bottom Action Buttons -->
+          <div class="flex items-center gap-3 pt-3 border-t border-zinc-800">
+            <a href="${ev.source_url || ev.club_url}" target="_blank" rel="noopener noreferrer" 
+               class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-black font-bold text-xs sm:text-sm text-center shadow transition flex items-center justify-center gap-1.5">
+              <span>公式チケット・詳細ページ</span> ↗
+            </a>
+            <button onclick="closeCinemaModalDirect()" class="py-3 px-5 rounded-xl border border-zinc-800 hover:bg-zinc-900 text-zinc-300 text-xs sm:text-sm font-semibold transition">
+              閉じる
+            </button>
+          </div>
+
+        </div>
+      `;
+
+      document.getElementById('cinemaModal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeCinemaModal(e) {
+      if (e.target.id === 'cinemaModal') closeCinemaModalDirect();
+    }
+    function closeCinemaModalDirect() {
+      document.getElementById('cinemaModal').classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    }
+
+    // Individual Concentration Booth Mode (一蘭風・個別集中鑑賞ブース)
+    function openBoothView() {
+      const filtered = getFilteredEvents();
+      if (filtered.length === 0) return;
+      boothCurrentIndex = 0;
+      updateBoothContent();
+      document.getElementById('boothModal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      playCinemaSound(440, 'triangle', 0.2);
+    }
+
+    function updateBoothContent() {
+      const filtered = getFilteredEvents();
+      if (boothCurrentIndex >= filtered.length) boothCurrentIndex = 0;
+      if (boothCurrentIndex < 0) boothCurrentIndex = filtered.length - 1;
+
+      const ev = filtered[boothCurrentIndex];
+      document.getElementById('boothIndex').innerText = (boothCurrentIndex + 1) + ' / ' + filtered.length;
+
+      const posterImg = ev.flyer || ev.backup_flyer;
+
+      document.getElementById('boothBody').innerHTML = `
+        <!-- Booth Poster Frame with Spotlight -->
+        <div class="relative w-full max-w-sm aspect-[2/3] rounded-2xl overflow-hidden shadow-2xl border-2 border-amber-500/60 bg-black flex-shrink-0">
+          <img src="${posterImg}" alt="${ev.title}" referrerpolicy="no-referrer" class="w-full h-full object-cover">
+          <div class="absolute top-3 left-3 px-2.5 py-0.5 rounded text-[10px] font-mono-code font-bold bg-black/85 text-amber-300 border border-amber-500/40">
+            ${ev.area} • ${ev.club_name}
+          </div>
+        </div>
+
+        <!-- Focused Information Board -->
+        <div class="w-full max-w-lg space-y-4 text-left">
+          <div class="space-y-1">
+            <span class="text-xs font-mono-code text-amber-400 font-bold">🎬 SPECIAL SHOWCASE NO. ${boothCurrentIndex + 1}</span>
+            <h3 class="text-2xl sm:text-3xl font-extrabold text-white font-cinema-title leading-tight">${ev.title}</h3>
+            <p class="text-xs sm:text-sm text-zinc-400">${ev.club_name} (${ev.station})</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-zinc-950 border border-zinc-800 space-y-2 text-xs font-mono-code">
+            <div class="flex justify-between"><span class="text-zinc-500">上映日時:</span><span class="text-white font-bold">${ev.date}</span></div>
+            <div class="flex justify-between"><span class="text-zinc-500">入場料金:</span><span class="text-amber-300 font-bold">${ev.fee}</span></div>
+            <div class="flex justify-between"><span class="text-zinc-500">音響システム:</span><span class="text-zinc-300">${ev.sound}</span></div>
+            <div class="flex justify-between"><span class="text-zinc-500">ジャンル:</span><span class="text-zinc-300">${ev.genre}</span></div>
+          </div>
+
+          <div class="space-y-1">
+            <span class="text-xs font-bold text-zinc-400 font-mono-code uppercase">出演キャスト</span>
+            <div class="text-xs text-zinc-200 bg-zinc-900/60 p-3 rounded-xl border border-zinc-800/60">
+              ${ev.artists}
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 pt-2">
+            <a href="${ev.source_url || ev.club_url}" target="_blank" rel="noopener noreferrer" 
+               class="flex-1 py-3 px-4 rounded-xl bg-white hover:bg-zinc-200 text-black font-bold text-xs sm:text-sm text-center shadow transition">
+              公式チケット・詳細を見る ↗
+            </a>
+            <a href="${posterImg}" target="_blank" rel="noopener noreferrer" 
+               class="py-3 px-4 rounded-xl border border-zinc-800 text-zinc-300 hover:text-white text-xs font-mono-code">
+              ポスター原寸
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+    function prevBooth() {
+      boothCurrentIndex--;
+      playCinemaSound(360, 'sine', 0.08);
+      updateBoothContent();
+    }
+    function nextBooth() {
+      boothCurrentIndex++;
+      playCinemaSound(400, 'sine', 0.08);
+      updateBoothContent();
+    }
+    function closeBoothModal(e) {
+      if (e.target.id === 'boothModal') closeBoothModalDirect();
+    }
+    function closeBoothModalDirect() {
+      document.getElementById('boothModal').classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    }
+
+    // Keyboard Navigation
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeCinemaModalDirect();
+        closeBoothModalDirect();
+      } else if (!document.getElementById('boothModal').classList.contains('hidden')) {
+        if (e.key === 'ArrowLeft') prevBooth();
+        else if (e.key === 'ArrowRight') nextBooth();
+      }
+    });
+
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      renderGallery();
+    });
+  </script>
+</body>
+</html>
