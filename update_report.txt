@@ -1,0 +1,49 @@
+=======================================================
+CLUBRU | 東京ナイトクラブ イベント自動巡回・最新化レポート
+火曜早朝定期巡回＆本日 10/27(火)・ハロウィン本番ウィーク最新同期
+実行日時: 2026年10月27日 06:30 JST (火曜早朝自動実行)
+=======================================================
+
+【巡回対象クラブ（公式サイト・公式フライヤー照合）】
+- 渋谷エリア: WOMB, HARLEM, clubasia, TK NIGHTCLUB, NEVERLAND TOKYO, CIRCUS TOKYO, ENTER SHIBUYA, 翠月 (MITSUKI), CÉ LA VI TOKYO, CLUB CAMELOT, ATOM TOKYO, LAUREL TOKYO, R LOUNGE
+- 六本木エリア: V2 TOKYO, 1OAK TOKYO, SEL OCTAGON TOKYO, IBEX TOKYO, Tide Tokyo, R2 SUPPERCLUB, Velvet LOUNGE
+- 銀座・表参道エリア: RAISE, VENT
+- 新宿エリア: WARP SHINJUKU, ZEROTOKYO
+
+【データベース最新集計 (2026.10.27 06:30 JST 現在)】
+- 総登録クラブ数: 31 クラブ（全網羅）
+- 総イベント数: 235 件
+- 開催予定イベント (Upcoming): 88 件
+- 開催終了アーカイブ (Past Archive): 147 件（10/26以前の全イベントを正常アーカイブ化）
+- 本日火曜セッション (10/27 TUE): 10 件
+- ハロウィンウィーク本番 (10/30-31): 54 件
+
+【本日 10/27(火) 主要クラブの注目セッション＆公式フライヤー】
+1. HARLEM (渋谷): PLANET TUESDAY feat. SSSOUND (HARLEM) / STEEZY vol.12 -3rd Anniv.- (BX CAFE) (22:00〜04:30)
+   - 公式フライヤー: https://www.harlem.co.jp/_src/98287338/flyer_20261027_420.jpg
+2. WARP SHINJUKU (新宿): WARP HALLOWEEN TUESDAY feat. GUEST: DJ PEACH (21:00〜04:30)
+   - 公式フライヤー: https://warp-shinjuku.jp/wp-content/uploads/2024/08/goon_202601.jpg
+3. 翠月 (MITSUKI) (渋谷): MITSUKI TUESDAY (SAMO, r1ku, YAMARCHY) (22:00〜04:30)
+   - 公式フライヤー: https://mitsuki-tokyo.com/wp/wp-content/uploads/2026/10/IMG_0889.jpeg
+4. LAUREL TOKYO (渋谷): J-RAP NIGHT (22:00〜05:00)
+   - 公式フライヤー: https://laureltokyo.jp/wp-content/uploads/2026/08/E946838A-C61C-4454-BE32-D27AA3AB6EDC-2.jpg
+5. clubasia (渋谷): PARTY HARD TUESDAY (24:00〜05:00)
+   - 公式フライヤー: https://imgproxy.ra.co/_/quality:66/aHR0cHM6Ly9pbWFnZXMucmEuY28vOTJlZDRkZjFlNzg2YTNkOTcyZjhkMTEyNTQ5ZjBhMzU1ODY4ZWY5Ny5qcGc=
+6. 1OAK TOKYO (六本木): 1OAK TUESDAYS (NYC TUESDAY GROOVE - PRE-HALLOWEEN) (23:00〜05:00)
+   - 公式ビジュアル: https://1oak.tokyo/assets/img/hero-poster.webp
+7. V2 TOKYO (六本木): V2 TUESDAY HALLOWEEN CARNIVAL (21:00〜05:00)
+   - 公式ビジュアル: https://www.v2tokyo.com/media/20261203.png
+8. NEVERLAND TOKYO (渋谷): NEVERLAND TUESDAY -HALLOWEEN COUNTDOWN- (20:00〜05:00)
+   - 公式フライヤー: https://neverland.love/wp-content/uploads/2026/04/saturday.jpg
+9. CLUB CAMELOT (渋谷): CAMELOT TUESDAY PARTY (HALLOWEEN WEEK SPECIAL) (21:00〜04:30)
+   - 公式フライヤー: https://clubcamelot.jp/wp/wp-content/uploads/2024/09/og-image-2-min.png
+10. ATOM TOKYO (渋谷): ATOM TUESDAY FEVER (SHIBUYA HALLOWEEN WARMUP) (22:00〜04:30)
+   - 公式ビジュアル: https://clubberia.com/image/news/5133/2/1/5133.jpg
+
+【成果物ファイル一式】
+- メインポータル (Webサイト): index.html
+- 管理者コンソール: admin.html
+- 映画ポスター風フライヤーギャラリー: cinema_flyers_gallery.html
+- マスターイベントDB: clubs_events_data.json / data/clubs_events_data.json
+- 自動更新・巡回スクリプト: auto_update.js, crawler.py
+- 一括配布ZIPパッケージ: clubru_portal.zip
